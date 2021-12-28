@@ -1,0 +1,26 @@
+scalar StudentID
+scalar Club
+
+type Form {
+    studentId: StudentID!
+    name: String!
+    club: String!
+    answerList: [String]!
+    portfolioURL: URL
+    otherURLs: [URL]!
+}
+
+input CreateFormInput {
+    studentId: StudentID!
+    name: String! @constraint(maxLength: 5)
+    club: Club!
+    answerList: [String]!
+    portfolioURL: URL
+    otherURLs: [URL]!
+}
+
+extend type Mutation {
+    createForm(
+        input: CreateFormInput!
+    ): Form!
+}

@@ -10,6 +10,7 @@ import { permissions } from "lib"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { GraphQLUpload } from "graphql-upload"
 import { typeDefs as ScalarNameTypeDefinition, resolvers as scalarResolvers } from "graphql-scalars"
+import * as customScalar from "config/scalars"
 import { constraintDirective, constraintDirectiveTypeDefs } from "graphql-constraint-directive"
 import { applyMiddleware } from "graphql-middleware"
 
@@ -34,6 +35,7 @@ const schema = constraintDirective()(
 		typeDefs: [...typeDefs, ...ScalarNameTypeDefinition, constraintDirectiveTypeDefs],
 		resolvers: {
 			...resolvers,
+			...customScalar,
 			...scalarResolvers,
 			Upload: GraphQLUpload,
 		},
