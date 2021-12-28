@@ -234,6 +234,76 @@ describe("Form Service", () => {
 		})
 	})
 
+	describe("Query getFormByStudentId", async () => {
+		const query = `
+			query ($studentId: StudentID!, $cursor: ObjectID, $offset: Int! = 10) {
+				getFormByStudentId(studentId: $studentId, cursor: $cursor, offset: $offset) {
+					edges {
+						cursor
+						node {
+							studentId
+							name
+							club
+							answerList
+							portfolioURL
+							otherURLs
+							formId
+							date
+						}
+					}
+					pageInfo {
+						hasNextPage
+						startCursor
+						endCursor
+					}
+					totalCount
+				}
+			}
+		`
+
+		describe("Success", () => {
+			it("Successful request (empty cursor) / Should be return FormConnection type", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.teacher}`)
+					.send(JSON.stringify({ query, variables: { studentId: 10217, offset: 1 } }))
+				const { edges, pageInfo, totalCount } = body.data.getFormByStudentId as FormConnection
+				deepEqual(totalCount, 2)
+				deepEqual(pageInfo.hasNextPage, true)
+				deepEqual(pageInfo.startCursor, null)
+				deepEqual(pageInfo.endCursor, edges[0].cursor)
+				deepEqual(edges.length, 1)
+			})
+
+			it("Successful request (last cursor) / Should be return FormConnection type", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.emotion}`)
+					.send(JSON.stringify({ query, variables: { studentId: 10217, cursor: formIds[1], offset: 1 } }))
+					.expect(200)
+				const { edges, pageInfo, totalCount } = body.data.getFormByStudentId as FormConnection
+				deepEqual(totalCount, 2)
+				deepEqual(pageInfo.hasNextPage, false)
+				deepEqual(pageInfo.startCursor, formIds[1])
+				deepEqual(pageInfo.endCursor, null)
+				deepEqual(edges.length, 0)
+			})
+		})
+
+		describe("Failure", () => {
+			it("Failed request (empty authorization headers) / Should be return errors", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.send(JSON.stringify({ query, variables: { studentId: 10217, offset: 1 } }))
+					.expect(200)
+				deepEqual(body.errors[0].message, "Not Authorised!")
+			})
+		})
+	})
+
 	after(async () => {
 		const db = (await mongoDB.get()) as Db
 		await Promise.all([

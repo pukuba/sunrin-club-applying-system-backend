@@ -7,6 +7,7 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 		otherURLs: otherURLs.map(url => url.href),
 		portfolioURL: portfolioURL?.href,
 		...data,
+		ip: context.ip,
 		date: new Date(Date.now() + 1000 * 60 * 60 * 9).toISOString(),
 	}
 	const { insertedId: formId } = await context.db.collection("form").insertOne(document)

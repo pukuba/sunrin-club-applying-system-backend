@@ -50,6 +50,7 @@ export const permissions = shield(
 		},
 		Query: {
 			getFormByClub: isValidGetFormByClub,
+			getFormByStudentId: isValidUser,
 		},
 	},
 	{ allowExternalErrors: true }
