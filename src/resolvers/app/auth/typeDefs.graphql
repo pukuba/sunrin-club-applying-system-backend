@@ -2,11 +2,29 @@ extend type Mutation {
     login(
         input: LoginInput!
     ): User!
+
+    sendVerifyCode(
+        input: SendVerifyCodeInput!
+    ): Boolean!
+
+    checkVerifyCode(
+        input: CheckVerifyCodeInput!
+    ): JWT!
+}
+
+
+input CheckVerifyCodeInput {
+    phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
+    verifyCode: String! @constraint(pattern: "^[0-9]{6}$")
 }
 
 input LoginInput {
     id: String! @constraint(pattern: "^(unifox|layer7|teamlog|nefus|emotion|teacher)")
     password: String! @constraint(maxLength: 30)
+}
+
+input SendVerifyCodeInput {
+    phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
 }
 
 type User {
