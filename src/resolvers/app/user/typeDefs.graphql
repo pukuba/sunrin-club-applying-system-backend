@@ -12,5 +12,6 @@ input LoginInput {
 type User {
     # Club or Teacher
     role: String! 
+    # Bearer {Token} 과 같은 형태로 Authorization 헤더에 넣어 사용합니다 
     token: JWT!
 }
