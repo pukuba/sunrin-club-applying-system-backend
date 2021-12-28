@@ -7,7 +7,7 @@ import { express as voyagerMiddleware } from "graphql-voyager/middleware"
 import { ApolloServer } from "apollo-server-express"
 import { createServer, Server } from "http"
 import depthLimit from "graphql-depth-limit"
-import { permissions } from "lib"
+import { permissions, decodeToken } from "lib"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { GraphQLUpload } from "graphql-upload"
 import { typeDefs as ScalarNameTypeDefinition, resolvers as scalarResolvers } from "graphql-scalars"
@@ -48,10 +48,11 @@ export default (async () => {
 		schema: applyMiddleware(schema, permissions),
 		context: ({ req }) => {
 			const ip = req.headers["x-forwarded-for"] || req.headers["CF-Connecting-IP"] || req.socket.remoteAddress
+			const token = req.headers["authorization"]
 			if (!ip) {
 				throw new Error("No IP")
 			}
-			return { db, redis, ip }
+			return { db, redis, ip, user: decodeToken(token) }
 		},
 		validationRules: [depthLimit(8)],
 		debug: env.NODE_ENV !== "production",
