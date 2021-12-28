@@ -1,0 +1,16 @@
+extend type Mutation {
+    login(
+        input: LoginInput!
+    ): User!
+}
+
+input LoginInput {
+    id: String! @constraint(pattern: "^(unifox|layer7|teamlog|nefus|emotion|teacher)")
+    password: String! @constraint(maxLength: 30)
+}
+
+type User {
+    # Club or Teacher
+    role: String! 
+    token: JWT!
+}

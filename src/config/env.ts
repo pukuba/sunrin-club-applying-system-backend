@@ -3,4 +3,5 @@ export const env = {
 	PORT: process.env.PORT || 3000,
 	NODE_ENV: process.env.NODE_ENV || "development",
 	REDIS_HOST: process.env.REDIS_HOST || "redis://localhost",
+	JWT_SECRET: process.env.JWT_SECRET || "front-memory",
 }

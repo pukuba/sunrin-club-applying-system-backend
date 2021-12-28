@@ -24,6 +24,10 @@ export type Scalars = {
   /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
   ObjectID: any;
   data_String_NotNull_pattern_ping: any;
+  id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: any;
+  password_String_NotNull_maxLength_30: any;
+  /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
+  JWT: any;
   /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   BigInt: any;
   /** The `Byte` scalar type represents byte value as a Buffer */
@@ -100,8 +104,6 @@ export type Scalars = {
   JSON: any;
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSONObject: any;
-  /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
-  JWT: any;
   /** A field whose value is a valid decimal degrees latitude number (53.471): https://en.wikipedia.org/wiki/Latitude */
   Latitude: any;
   /** A local date string (i.e., with no associated timezone) in `YYYY-MM-DD` format, e.g. `2020-01-01`. */
@@ -175,6 +177,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createForm: Form;
   healthCheck: Scalars['String'];
+  login: User;
 };
 
 
@@ -185,6 +188,11 @@ export type MutationCreateFormArgs = {
 
 export type MutationHealthCheckArgs = {
   input?: InputMaybe<HealthCheckInput>;
+};
+
+
+export type MutationLoginArgs = {
+  input: LoginInput;
 };
 
 export type CreateFormInput = {
@@ -209,6 +217,17 @@ export type Form = {
 
 export type HealthCheckInput = {
   data: Scalars['data_String_NotNull_pattern_ping'];
+};
+
+export type LoginInput = {
+  id: Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher'];
+  password: Scalars['password_String_NotNull_maxLength_30'];
+};
+
+export type User = {
+  __typename?: 'User';
+  role: Scalars['String'];
+  token: Scalars['JWT'];
 };
 
 export type AdditionalEntityFields = {
@@ -310,6 +329,11 @@ export type ResolversTypes = {
   ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: ResolverTypeWrapper<Scalars['data_String_NotNull_pattern_ping']>;
+  LoginInput: LoginInput;
+  id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: ResolverTypeWrapper<Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher']>;
+  password_String_NotNull_maxLength_30: ResolverTypeWrapper<Scalars['password_String_NotNull_maxLength_30']>;
+  User: ResolverTypeWrapper<User>;
+  JWT: ResolverTypeWrapper<Scalars['JWT']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
@@ -333,7 +357,6 @@ export type ResolversTypes = {
   ISO8601Duration: ResolverTypeWrapper<Scalars['ISO8601Duration']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
-  JWT: ResolverTypeWrapper<Scalars['JWT']>;
   Latitude: ResolverTypeWrapper<Scalars['Latitude']>;
   LocalDate: ResolverTypeWrapper<Scalars['LocalDate']>;
   LocalEndTime: ResolverTypeWrapper<Scalars['LocalEndTime']>;
@@ -384,6 +407,11 @@ export type ResolversParentTypes = {
   ObjectID: Scalars['ObjectID'];
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: Scalars['data_String_NotNull_pattern_ping'];
+  LoginInput: LoginInput;
+  id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher'];
+  password_String_NotNull_maxLength_30: Scalars['password_String_NotNull_maxLength_30'];
+  User: User;
+  JWT: Scalars['JWT'];
   Boolean: Scalars['Boolean'];
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: Scalars['BigInt'];
@@ -406,7 +434,6 @@ export type ResolversParentTypes = {
   ISO8601Duration: Scalars['ISO8601Duration'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
-  JWT: Scalars['JWT'];
   Latitude: Scalars['Latitude'];
   LocalDate: Scalars['LocalDate'];
   LocalEndTime: Scalars['LocalEndTime'];
@@ -527,6 +554,7 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
   healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
+  login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
 };
 
 export interface ClubScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Club'], any> {
@@ -562,6 +590,24 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export interface Data_String_NotNull_Pattern_PingScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['data_String_NotNull_pattern_ping'], any> {
   name: 'data_String_NotNull_pattern_ping';
+}
+
+export interface Id_String_NotNull_Pattern_Unifoxlayer7teamlognefusemotionteacherScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher'], any> {
+  name: 'id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher';
+}
+
+export interface Password_String_NotNull_MaxLength_30ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['password_String_NotNull_maxLength_30'], any> {
+  name: 'password_String_NotNull_maxLength_30';
+}
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['JWT'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface JwtScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JWT'], any> {
+  name: 'JWT';
 }
 
 export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['BigInt'], any> {
@@ -645,10 +691,6 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSONObject'], any> {
   name: 'JSONObject';
-}
-
-export interface JwtScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JWT'], any> {
-  name: 'JWT';
 }
 
 export interface LatitudeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Latitude'], any> {
@@ -786,6 +828,10 @@ export type Resolvers<ContextType = any> = {
   Form?: FormResolvers<ContextType>;
   ObjectID?: GraphQLScalarType;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;
+  id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher?: GraphQLScalarType;
+  password_String_NotNull_maxLength_30?: GraphQLScalarType;
+  User?: UserResolvers<ContextType>;
+  JWT?: GraphQLScalarType;
   BigInt?: GraphQLScalarType;
   Byte?: GraphQLScalarType;
   Currency?: GraphQLScalarType;
@@ -806,7 +852,6 @@ export type Resolvers<ContextType = any> = {
   ISO8601Duration?: GraphQLScalarType;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
-  JWT?: GraphQLScalarType;
   Latitude?: GraphQLScalarType;
   LocalDate?: GraphQLScalarType;
   LocalEndTime?: GraphQLScalarType;
