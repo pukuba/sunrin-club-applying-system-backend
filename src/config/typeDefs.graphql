@@ -1,0 +1,22 @@
+scalar Upload
+
+type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+}
+
+type Mutation
+
+type Query
+
+enum CacheControlScope {
+    PUBLIC
+    PRIVATE
+}
+
+directive @cacheControl(
+    maxAge: Int
+    scope: CacheControlScope
+    inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION

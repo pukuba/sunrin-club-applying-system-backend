@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+    proxy:
+        image: nginx:latest
+        container_name: proxy
+        ports:
+            - "80:80"
+        volumes:
+            - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+            - ./proxy/proxy.conf:/etc/nginx/proxy.conf
+        deploy:
+            # placement:
+            #     constraints:
+            #         - "node.role==manager"
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "4g"
+                reservations:
+                    cpus: "0.25"
+                    memory: "1g"
+            mode: replicated
+            replicas: 1
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost/nginx-health"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 10s
+        depends_on:
+            - express
+
+    mongo:
+        image: mongo:latest
+        container_name: mongo
+        volumes:
+            - /usr/local/var/mongodb:/data/db
+
+    express:
+        container_name: express
+        image: was:latest
+        volumes:
+            - ./file:/server/file
+        deploy:
+            # placement:
+            #     constraints:
+            #         - "node.role==worker"
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "4g"
+            mode: replicated
+            replicas: 1
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:3000/.well-known/apollo/server-health"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 10s
+        depends_on:
+            - mongo
