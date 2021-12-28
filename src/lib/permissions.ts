@@ -1,7 +1,7 @@
 import { shield, rule, and } from "graphql-shield"
 import { Context, redis } from "config"
 import { ApolloError, UserInputError } from "apollo-server-express"
-import { CreateFormInput } from "resolvers/app/apply/models"
+import { CreateFormInput } from "resolvers/app/form/models"
 import { validEmotion } from "./validForm"
 
 const isValidForm = rule()(async (parent: void, args: CreateFormInput, context: Context) => {
