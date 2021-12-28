@@ -1,7 +1,7 @@
 import { Context } from "config"
-import { CreateFormInput } from "./models"
+import { MutationCreateFormArgs } from "config/models"
 
-export const createForm = async (parent: void, args: CreateFormInput, context: Context) => {
+export const createForm = async (parent: void, args: MutationCreateFormArgs, context: Context) => {
 	const { otherURLs, portfolioURL, ...data } = args.input
 	const document = {
 		otherURLs: otherURLs.map(url => url.href),

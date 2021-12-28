@@ -1,7 +1,8 @@
 import { Context, ObjectID } from "config"
-import { GetFormByClubInput, GetFormByClubQuery } from "./models"
+import { GetFormByClubQuery } from "./models"
+import { QueryGetFormByClubArgs } from "config/models"
 
-export const getFormByClub = async (parent: void, args: GetFormByClubInput, context: Context) => {
+export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, context: Context) => {
 	const { offset, cursor, club } = args
 	const { db } = context
 	const query: GetFormByClubQuery = [
@@ -11,7 +12,7 @@ export const getFormByClub = async (parent: void, args: GetFormByClubInput, cont
 			},
 		},
 		{ $sort: { _id: -1 } },
-		{ $limit: offset },
+		{ $limit: offset as number },
 	]
 
 	if (cursor) {

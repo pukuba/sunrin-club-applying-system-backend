@@ -13,6 +13,10 @@ export interface Context {
 	db: Db
 	redis: typeof Redis
 	ip: string
+	user: {
+		id?: string
+		role?: "teamlog" | "teacher" | "emotion" | "layer7" | "nefus" | "unifox"
+	} | null
 }
 
 export { ObjectID }

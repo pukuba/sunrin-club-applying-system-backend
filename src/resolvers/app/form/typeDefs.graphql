@@ -16,7 +16,7 @@ input CreateFormInput {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
     club: Club!
-    answerList: [String]!
+    answerList: [String!]!
     portfolioURL: URL
     otherURLs: [URL]!
 }

@@ -236,7 +236,7 @@ export type MutationLoginArgs = {
 };
 
 export type CreateFormInput = {
-  answerList: Array<InputMaybe<Scalars['String']>>;
+  answerList: Array<Scalars['String']>;
   club: Scalars['Club'];
   name: Scalars['name_String_NotNull_maxLength_5'];
   otherURLs: Array<InputMaybe<Scalars['URL']>>;
