@@ -1,6 +1,6 @@
 import { deepStrictEqual as deepEqual } from "assert"
 import request from "supertest"
-import { Form, FormConnection } from "config/models"
+import { Form, FormConnection, Student } from "config/models"
 import appPromise from "app"
 import { Server } from "http"
 import { mongoDB } from "config"
@@ -300,6 +300,29 @@ describe("Form Service", () => {
 					.send(JSON.stringify({ query, variables: { studentId: 10217, offset: 1 } }))
 					.expect(200)
 				deepEqual(body.errors[0].message, "Not Authorised!")
+			})
+		})
+	})
+
+	describe("Mutation getStudentByClub", () => {
+		const query = `
+			query ($club: Club!) {
+				getStudentByClub(club: $club) {
+					studentId
+					name
+				}
+			}
+		`
+
+		describe("Success", () => {
+			it("Successful request / Should be return Array<Student>", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.emotion}`)
+					.send(JSON.stringify({ query, variables: { club: "emotion" } }))
+					.expect(200)
+				deepEqual(body.data.getStudentByClub.length, 1)
 			})
 		})
 	})
