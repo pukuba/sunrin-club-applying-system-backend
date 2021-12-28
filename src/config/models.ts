@@ -16,13 +16,13 @@ export type Scalars = {
   Club: any;
   /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
   ObjectID: any;
+  name_String_NotNull_maxLength_5: any;
+  /** 학번 eg) 10311 이는 1학년 3반 11번을 나타냅니다 */
+  StudentID: any;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: any;
   /** A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt. */
   URL: any;
-  /** 학번 eg) 10311 이는 1학년 3반 11번을 나타냅니다 */
-  StudentID: any;
-  name_String_NotNull_maxLength_5: any;
   data_String_NotNull_pattern_ping: any;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: any;
   password_String_NotNull_maxLength_30: any;
@@ -172,6 +172,7 @@ export type Query = {
   __typename?: 'Query';
   getFormByClub: FormConnection;
   getFormByStudentId: FormConnection;
+  getStudentByClub: Array<Student>;
   healthLive: Scalars['DateTime'];
 };
 
@@ -189,6 +190,11 @@ export type QueryGetFormByStudentIdArgs = {
   studentId: Scalars['StudentID'];
 };
 
+
+export type QueryGetStudentByClubArgs = {
+  club: Scalars['Club'];
+};
+
 export type FormConnection = {
   __typename?: 'FormConnection';
   edges: Array<FormEdge>;
@@ -202,15 +208,20 @@ export type FormEdge = {
   node: Form;
 };
 
-export type Form = {
+export type Form = StudentInfo & {
   __typename?: 'Form';
   answerList: Array<Maybe<Scalars['String']>>;
   club: Scalars['String'];
   date: Scalars['DateTime'];
   formId: Scalars['ObjectID'];
-  name: Scalars['String'];
+  name: Scalars['name_String_NotNull_maxLength_5'];
   otherURLs: Array<Maybe<Scalars['URL']>>;
   portfolioURL?: Maybe<Scalars['URL']>;
+  studentId: Scalars['StudentID'];
+};
+
+export type StudentInfo = {
+  name: Scalars['name_String_NotNull_maxLength_5'];
   studentId: Scalars['StudentID'];
 };
 
@@ -219,6 +230,12 @@ export type PageInfo = {
   endCursor?: Maybe<Scalars['ObjectID']>;
   hasNextPage: Scalars['Boolean'];
   startCursor?: Maybe<Scalars['ObjectID']>;
+};
+
+export type Student = StudentInfo & {
+  __typename?: 'Student';
+  name: Scalars['name_String_NotNull_maxLength_5'];
+  studentId: Scalars['StudentID'];
 };
 
 export type Mutation = {
@@ -360,15 +377,17 @@ export type ResolversTypes = {
   FormConnection: ResolverTypeWrapper<FormConnection>;
   FormEdge: ResolverTypeWrapper<FormEdge>;
   Form: ResolverTypeWrapper<Form>;
+  StudentInfo: ResolversTypes['Form'] | ResolversTypes['Student'];
+  name_String_NotNull_maxLength_5: ResolverTypeWrapper<Scalars['name_String_NotNull_maxLength_5']>;
+  StudentID: ResolverTypeWrapper<Scalars['StudentID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   URL: ResolverTypeWrapper<Scalars['URL']>;
-  StudentID: ResolverTypeWrapper<Scalars['StudentID']>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Student: ResolverTypeWrapper<Student>;
   Mutation: ResolverTypeWrapper<{}>;
   CreateFormInput: CreateFormInput;
-  name_String_NotNull_maxLength_5: ResolverTypeWrapper<Scalars['name_String_NotNull_maxLength_5']>;
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: ResolverTypeWrapper<Scalars['data_String_NotNull_pattern_ping']>;
   LoginInput: LoginInput;
@@ -441,15 +460,17 @@ export type ResolversParentTypes = {
   FormConnection: FormConnection;
   FormEdge: FormEdge;
   Form: Form;
+  StudentInfo: ResolversParentTypes['Form'] | ResolversParentTypes['Student'];
+  name_String_NotNull_maxLength_5: Scalars['name_String_NotNull_maxLength_5'];
+  StudentID: Scalars['StudentID'];
   String: Scalars['String'];
   DateTime: Scalars['DateTime'];
   URL: Scalars['URL'];
-  StudentID: Scalars['StudentID'];
   PageInfo: PageInfo;
   Boolean: Scalars['Boolean'];
+  Student: Student;
   Mutation: {};
   CreateFormInput: CreateFormInput;
-  name_String_NotNull_maxLength_5: Scalars['name_String_NotNull_maxLength_5'];
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: Scalars['data_String_NotNull_pattern_ping'];
   LoginInput: LoginInput;
@@ -589,6 +610,7 @@ export type ConstraintDirectiveResolver<Result, Parent, ContextType = any, Args 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getFormByClub?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club' | 'offset'>>;
   getFormByStudentId?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByStudentIdArgs, 'offset' | 'studentId'>>;
+  getStudentByClub?: Resolver<Array<ResolversTypes['Student']>, ParentType, ContextType, RequireFields<QueryGetStudentByClubArgs, 'club'>>;
   healthLive?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
@@ -618,12 +640,26 @@ export type FormResolvers<ContextType = any, ParentType extends ResolversParentT
   club?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   formId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
   otherURLs?: Resolver<Array<Maybe<ResolversTypes['URL']>>, ParentType, ContextType>;
   portfolioURL?: Resolver<Maybe<ResolversTypes['URL']>, ParentType, ContextType>;
   studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export type StudentInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['StudentInfo'] = ResolversParentTypes['StudentInfo']> = {
+  __resolveType: TypeResolveFn<'Form' | 'Student', ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
+  studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
+};
+
+export interface Name_String_NotNull_MaxLength_5ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['name_String_NotNull_maxLength_5'], any> {
+  name: 'name_String_NotNull_maxLength_5';
+}
+
+export interface StudentIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['StudentID'], any> {
+  name: 'StudentID';
+}
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
@@ -633,14 +669,16 @@ export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
   name: 'URL';
 }
 
-export interface StudentIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['StudentID'], any> {
-  name: 'StudentID';
-}
-
 export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['ObjectID']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   startCursor?: Resolver<Maybe<ResolversTypes['ObjectID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StudentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Student'] = ResolversParentTypes['Student']> = {
+  name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
+  studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -649,10 +687,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
   login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
 };
-
-export interface Name_String_NotNull_MaxLength_5ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['name_String_NotNull_maxLength_5'], any> {
-  name: 'name_String_NotNull_maxLength_5';
-}
 
 export interface Data_String_NotNull_Pattern_PingScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['data_String_NotNull_pattern_ping'], any> {
   name: 'data_String_NotNull_pattern_ping';
@@ -890,12 +924,14 @@ export type Resolvers<ContextType = any> = {
   FormConnection?: FormConnectionResolvers<ContextType>;
   FormEdge?: FormEdgeResolvers<ContextType>;
   Form?: FormResolvers<ContextType>;
+  StudentInfo?: StudentInfoResolvers<ContextType>;
+  name_String_NotNull_maxLength_5?: GraphQLScalarType;
+  StudentID?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
   URL?: GraphQLScalarType;
-  StudentID?: GraphQLScalarType;
   PageInfo?: PageInfoResolvers<ContextType>;
+  Student?: StudentResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  name_String_NotNull_maxLength_5?: GraphQLScalarType;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher?: GraphQLScalarType;
   password_String_NotNull_maxLength_30?: GraphQLScalarType;

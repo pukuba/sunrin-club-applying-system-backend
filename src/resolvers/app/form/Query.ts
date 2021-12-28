@@ -1,6 +1,6 @@
 import { Context, ObjectID, RequiredContext } from "config"
 import { MongoQuery, QueryOptions } from "./models"
-import { QueryGetFormByClubArgs, QueryGetFormByStudentIdArgs } from "config/models"
+import { QueryGetFormByClubArgs, QueryGetFormByStudentIdArgs, QueryGetStudentByClubArgs } from "config/models"
 
 export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, context: Context) => {
 	const { offset, cursor, club } = args
@@ -66,4 +66,21 @@ export const getFormByStudentId = async (parent: void, args: QueryGetFormByStude
 			endCursor: data[data.length - 1]?._id.toString() ?? null,
 		},
 	}
+}
+
+export const getStudentByClub = async (parent: void, args: QueryGetStudentByClubArgs, context: Context) => {
+	let $match = {}
+	if (args.club) {
+		$match = { club: args.club }
+	}
+	const students = await context.db
+		.collection("form")
+		.aggregate([{ ...$match }, { $group: { _id: { studentId: "$studentId", name: "$name" } } }])
+		.toArray()
+	return students.map(x => {
+		return {
+			studentId: x._id.studentId,
+			name: x._id.name,
+		}
+	})
 }

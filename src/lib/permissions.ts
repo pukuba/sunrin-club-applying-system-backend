@@ -51,6 +51,7 @@ export const permissions = shield(
 		Query: {
 			getFormByClub: isValidGetFormByClub,
 			getFormByStudentId: isValidUser,
+			getStudentByClub: isValidGetFormByClub,
 		},
 	},
 	{ allowExternalErrors: true }
