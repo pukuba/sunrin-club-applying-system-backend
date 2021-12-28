@@ -1,11 +1,11 @@
-import { env } from "config"
+import { env } from "config/env"
 import { MongoClient, Db } from "mongodb"
 
 let db: Db | null = null
 const connectDB = () => {
 	const connect = async () => {
 		try {
-			const client = await MongoClient.connect(process.env.DB_HOST || env.MONGO_HOST, {
+			const client = await MongoClient.connect(env.MONGO_HOST, {
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
 			})
@@ -19,7 +19,7 @@ const connectDB = () => {
 
 	const get = async () => {
 		try {
-			if (db != null) {
+			if (db !== null) {
 				return db
 			} else {
 				console.log("getting new db connection")
@@ -55,4 +55,6 @@ export const redis = {
 	get: promisify(redisClient.get).bind(redisClient),
 	setex: promisify(redisClient.setex).bind(redisClient),
 	del: promisify(redisClient.del).bind(redisClient),
+	ttl: promisify(redisClient.ttl).bind(redisClient),
+	incr: promisify(redisClient.incr).bind(redisClient),
 }

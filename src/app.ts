@@ -1,7 +1,8 @@
 import dotenv from "dotenv"
 dotenv.config()
 
-import { env, mongoDB, redis } from "config"
+import { env } from "config/env"
+import { mongoDB, redis } from "config"
 import { express as voyagerMiddleware } from "graphql-voyager/middleware"
 import { ApolloServer } from "apollo-server-express"
 import { createServer, Server } from "http"
@@ -22,7 +23,6 @@ import expressPlayground from "graphql-playground-middleware-express"
 import { bodyParserGraphQL } from "body-parser-graphql"
 
 import resolvers from "resolvers"
-
 const app = express()
 app.use(bodyParserGraphQL())
 if (env.NODE_ENV !== "production") {
@@ -48,6 +48,9 @@ export default (async () => {
 		schema: applyMiddleware(schema, permissions),
 		context: ({ req }) => {
 			const ip = req.headers["x-forwarded-for"] || req.headers["CF-Connecting-IP"] || req.socket.remoteAddress
+			if (!ip) {
+				throw new Error("No IP")
+			}
 			return { db, redis, ip }
 		},
 		validationRules: [depthLimit(8)],
