@@ -43,6 +43,7 @@ describe("Form Service", () => {
 						answerList
 						portfolioURL
 						otherURLs
+						phoneNumber
 						formId
 						date
 					}
@@ -55,6 +56,7 @@ describe("Form Service", () => {
 					name: "남승원",
 					club: "emotion",
 					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3"],
+					phoneNumber: "01000000000",
 					portfolioURL: "https://www.naver.com/",
 					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
 				}
@@ -75,6 +77,7 @@ describe("Form Service", () => {
 					name: "남승원",
 					club: "emotion",
 					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3 ㅇㅅㅇ!"],
+					phoneNumber: "01000000000",
 					portfolioURL: "https://github.com/pukuba/",
 					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
 				}
@@ -97,6 +100,7 @@ describe("Form Service", () => {
 					name: "남승원",
 					club: "emotion",
 					answerList: ["", ""],
+					phoneNumber: "01000000000",
 					portfolioURL: "https://www.naver.com/",
 					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
 				}
@@ -115,6 +119,7 @@ describe("Form Service", () => {
 					name: "남승원",
 					club: "emotion",
 					answerList: ["", ""],
+					phoneNumber: "01000000000",
 					portfolioURL: "https://www.naver.com/",
 					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
 				}

@@ -1,9 +1,9 @@
 import { Mutation as health } from "resolvers/app/health"
 import { Mutation as form } from "resolvers/app/form"
-import { Mutation as user } from "resolvers/app/user"
+import { Mutation as auth } from "resolvers/app/auth"
 
 export default {
 	...health,
 	...form,
-	...user,
+	...auth,
 }

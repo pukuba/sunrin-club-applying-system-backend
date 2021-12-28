@@ -17,6 +17,7 @@ export type Scalars = {
   /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
   ObjectID: any;
   name_String_NotNull_maxLength_5: any;
+  phoneNumber_String_NotNull_pattern_010098: any;
   /** 학번 eg) 10311 이는 1학년 3반 11번을 나타냅니다 */
   StudentID: any;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
@@ -216,12 +217,14 @@ export type Form = StudentInfo & {
   formId: Scalars['ObjectID'];
   name: Scalars['name_String_NotNull_maxLength_5'];
   otherURLs: Array<Maybe<Scalars['URL']>>;
+  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
   portfolioURL?: Maybe<Scalars['URL']>;
   studentId: Scalars['StudentID'];
 };
 
 export type StudentInfo = {
   name: Scalars['name_String_NotNull_maxLength_5'];
+  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
   studentId: Scalars['StudentID'];
 };
 
@@ -235,6 +238,7 @@ export type PageInfo = {
 export type Student = StudentInfo & {
   __typename?: 'Student';
   name: Scalars['name_String_NotNull_maxLength_5'];
+  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
   studentId: Scalars['StudentID'];
 };
 
@@ -379,6 +383,7 @@ export type ResolversTypes = {
   Form: ResolverTypeWrapper<Form>;
   StudentInfo: ResolversTypes['Form'] | ResolversTypes['Student'];
   name_String_NotNull_maxLength_5: ResolverTypeWrapper<Scalars['name_String_NotNull_maxLength_5']>;
+  phoneNumber_String_NotNull_pattern_010098: ResolverTypeWrapper<Scalars['phoneNumber_String_NotNull_pattern_010098']>;
   StudentID: ResolverTypeWrapper<Scalars['StudentID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
@@ -462,6 +467,7 @@ export type ResolversParentTypes = {
   Form: Form;
   StudentInfo: ResolversParentTypes['Form'] | ResolversParentTypes['Student'];
   name_String_NotNull_maxLength_5: Scalars['name_String_NotNull_maxLength_5'];
+  phoneNumber_String_NotNull_pattern_010098: Scalars['phoneNumber_String_NotNull_pattern_010098'];
   StudentID: Scalars['StudentID'];
   String: Scalars['String'];
   DateTime: Scalars['DateTime'];
@@ -642,6 +648,7 @@ export type FormResolvers<ContextType = any, ParentType extends ResolversParentT
   formId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
   otherURLs?: Resolver<Array<Maybe<ResolversTypes['URL']>>, ParentType, ContextType>;
+  phoneNumber?: Resolver<ResolversTypes['phoneNumber_String_NotNull_pattern_010098'], ParentType, ContextType>;
   portfolioURL?: Resolver<Maybe<ResolversTypes['URL']>, ParentType, ContextType>;
   studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -650,11 +657,16 @@ export type FormResolvers<ContextType = any, ParentType extends ResolversParentT
 export type StudentInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['StudentInfo'] = ResolversParentTypes['StudentInfo']> = {
   __resolveType: TypeResolveFn<'Form' | 'Student', ParentType, ContextType>;
   name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
+  phoneNumber?: Resolver<ResolversTypes['phoneNumber_String_NotNull_pattern_010098'], ParentType, ContextType>;
   studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
 };
 
 export interface Name_String_NotNull_MaxLength_5ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['name_String_NotNull_maxLength_5'], any> {
   name: 'name_String_NotNull_maxLength_5';
+}
+
+export interface PhoneNumber_String_NotNull_Pattern_010098ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['phoneNumber_String_NotNull_pattern_010098'], any> {
+  name: 'phoneNumber_String_NotNull_pattern_010098';
 }
 
 export interface StudentIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['StudentID'], any> {
@@ -678,6 +690,7 @@ export type PageInfoResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type StudentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Student'] = ResolversParentTypes['Student']> = {
   name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
+  phoneNumber?: Resolver<ResolversTypes['phoneNumber_String_NotNull_pattern_010098'], ParentType, ContextType>;
   studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -926,6 +939,7 @@ export type Resolvers<ContextType = any> = {
   Form?: FormResolvers<ContextType>;
   StudentInfo?: StudentInfoResolvers<ContextType>;
   name_String_NotNull_maxLength_5?: GraphQLScalarType;
+  phoneNumber_String_NotNull_pattern_010098?: GraphQLScalarType;
   StudentID?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
   URL?: GraphQLScalarType;

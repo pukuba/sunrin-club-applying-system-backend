@@ -6,7 +6,7 @@ import { Server } from "http"
 import { mongoDB } from "config"
 import { Db, ObjectID } from "mongodb"
 
-describe("User Service", () => {
+describe("Auth Service", () => {
 	let app: Server
 	const deletedIds: string[] = []
 	before(async () => {

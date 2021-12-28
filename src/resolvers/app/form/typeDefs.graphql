@@ -4,11 +4,13 @@ scalar Club
 interface StudentInfo {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
+    phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
 }
 
 type Student implements StudentInfo {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
+    phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
 }
 
 type Form implements StudentInfo {
@@ -20,18 +22,22 @@ type Form implements StudentInfo {
     otherURLs: [URL]!
     formId: ObjectID!
     date: DateTime!
+    phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
 }
 
 input CreateFormInput {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
     club: Club!
+    phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
     answerList: [String!]!
     portfolioURL: URL
     otherURLs: [URL]!
 }
 
 extend type Mutation {
+
+    # 동아리 신청서 전송
     createForm(
         input: CreateFormInput!
     ): Form!
