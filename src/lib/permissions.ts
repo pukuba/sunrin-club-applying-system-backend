@@ -1,12 +1,12 @@
 import { shield, rule, and } from "graphql-shield"
 import { Context, redis } from "config"
-import { ApolloError } from "apollo-server-express"
+import { ApolloError, UserInputError } from "apollo-server-express"
 import { CreateFormInput } from "resolvers/app/apply/models"
 import { validEmotion } from "./validForm"
 
 const isValidForm = rule()(async (parent: void, args: CreateFormInput, context: Context) => {
 	if (args.input.club === "emotion") return validEmotion(args.input.answerList)
-	return true
+	else return true
 })
 
 const canSubmit = rule()(async (parent: void, args: void, context: Context) => {
