@@ -3,9 +3,12 @@ import request from "supertest"
 import { Form } from "config/models"
 import appPromise from "app"
 import { Server } from "http"
+import { mongoDB } from "config"
+import { Db, ObjectID } from "mongodb"
 
 describe("Apply Service", () => {
 	let app: Server
+	const deletedIds: string[] = []
 	before(async () => {
 		app = await appPromise
 	})
@@ -38,13 +41,14 @@ describe("Apply Service", () => {
 				.set("Content-Type", "application/json")
 				.send(JSON.stringify({ query, variables: { input } }))
 				.expect(200)
-			const data = body.data.createForm as Form
-			deepEqual(data.studentId, input.studentId)
-			deepEqual(data.name, input.name)
-			deepEqual(data.club, input.club)
-			deepEqual(data.answerList, input.answerList)
-			deepEqual(data.portfolioURL, input.portfolioURL)
-			deepEqual(data.otherURLs, input.otherURLs)
+			const { formId, ...data } = body.data.createForm as Form
+			deletedIds.push(formId)
+			deepEqual(data, input)
 		})
+	})
+
+	after(async () => {
+		const db = (await mongoDB.get()) as Db
+		await db.collection("form").deleteMany({ _id: { $in: deletedIds.map(id => new ObjectID(id)) } })
 	})
 })
