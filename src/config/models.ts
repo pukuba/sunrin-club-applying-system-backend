@@ -170,7 +170,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  getFormByClub: FormResult;
+  getFormByClub: FormConnection;
   healthLive: Scalars['DateTime'];
 };
 
@@ -181,10 +181,10 @@ export type QueryGetFormByClubArgs = {
   offset?: Scalars['Int'];
 };
 
-export type FormResult = {
-  __typename?: 'FormResult';
-  edges: Array<Maybe<FormEdge>>;
-  pageInfo?: Maybe<PageInfo>;
+export type FormConnection = {
+  __typename?: 'FormConnection';
+  edges: Array<FormEdge>;
+  pageInfo: PageInfo;
   totalCount: Scalars['Int'];
 };
 
@@ -208,6 +208,7 @@ export type Form = {
 
 export type PageInfo = {
   __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['ObjectID']>;
   hasNextPage: Scalars['Boolean'];
   startCursor?: Maybe<Scalars['ObjectID']>;
 };
@@ -348,7 +349,7 @@ export type ResolversTypes = {
   Club: ResolverTypeWrapper<Scalars['Club']>;
   ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  FormResult: ResolverTypeWrapper<FormResult>;
+  FormConnection: ResolverTypeWrapper<FormConnection>;
   FormEdge: ResolverTypeWrapper<FormEdge>;
   Form: ResolverTypeWrapper<Form>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -429,7 +430,7 @@ export type ResolversParentTypes = {
   Club: Scalars['Club'];
   ObjectID: Scalars['ObjectID'];
   Int: Scalars['Int'];
-  FormResult: FormResult;
+  FormConnection: FormConnection;
   FormEdge: FormEdge;
   Form: Form;
   String: Scalars['String'];
@@ -578,7 +579,7 @@ export type ConstraintDirectiveArgs = {
 export type ConstraintDirectiveResolver<Result, Parent, ContextType = any, Args = ConstraintDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getFormByClub?: Resolver<ResolversTypes['FormResult'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club' | 'offset'>>;
+  getFormByClub?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club' | 'offset'>>;
   healthLive?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
@@ -590,9 +591,9 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'ObjectID';
 }
 
-export type FormResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormResult'] = ResolversParentTypes['FormResult']> = {
-  edges?: Resolver<Array<Maybe<ResolversTypes['FormEdge']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+export type FormConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormConnection'] = ResolversParentTypes['FormConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['FormEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -628,6 +629,7 @@ export interface StudentIdScalarConfig extends GraphQLScalarTypeConfig<Resolvers
 }
 
 export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+  endCursor?: Resolver<Maybe<ResolversTypes['ObjectID']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   startCursor?: Resolver<Maybe<ResolversTypes['ObjectID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -876,7 +878,7 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Club?: GraphQLScalarType;
   ObjectID?: GraphQLScalarType;
-  FormResult?: FormResultResolvers<ContextType>;
+  FormConnection?: FormConnectionResolvers<ContextType>;
   FormEdge?: FormEdgeResolvers<ContextType>;
   Form?: FormResolvers<ContextType>;
   DateTime?: GraphQLScalarType;

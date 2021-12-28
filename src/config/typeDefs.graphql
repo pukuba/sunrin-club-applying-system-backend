@@ -24,4 +24,5 @@ directive @cacheControl(
 type PageInfo {
     hasNextPage: Boolean!
     startCursor: ObjectID
+    endCursor: ObjectID
 }

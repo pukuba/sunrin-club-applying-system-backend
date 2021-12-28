@@ -34,7 +34,7 @@ extend type Query {
         club: Club!
         offset: Int! = 10
         cursor: ObjectID
-    ): FormResult!
+    ): FormConnection!
 }
 
 type FormEdge {
@@ -42,8 +42,8 @@ type FormEdge {
     cursor: ObjectID!
 }
 
-type FormResult {
+type FormConnection {
     totalCount: Int!
-    edges: [FormEdge]!
-    pageInfo: PageInfo
+    edges: [FormEdge!]!
+    pageInfo: PageInfo!
 }

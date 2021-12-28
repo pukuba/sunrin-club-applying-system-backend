@@ -10,23 +10,24 @@ export const getFormByClub = async (parent: void, args: GetFormByClubInput, cont
 				club,
 			},
 		},
+		{ $sort: { _id: -1 } },
 		{ $limit: offset },
 	]
 
 	if (cursor) {
-		query[0].$match["$gt"] = new ObjectID(cursor)
+		query[0].$match["_id"] = { $gt: new ObjectID(cursor) }
 	}
 	const [data, count] = await Promise.all([
 		db.collection("form").aggregate(query).toArray(),
 		db.collection("form").find({ club }).count(),
 	])
-
 	return {
 		totalCount: count,
 		edges: data.map(x => ({ node: x, cursor: x._id.toString() })),
 		pageInfo: {
 			hasNextPage: data.length === offset,
 			startCursor: cursor,
+			endCursor: data[data.length - 1]?._id.toString() ?? null,
 		},
 	}
 }
