@@ -4,13 +4,33 @@ import { Form, FormConnection } from "config/models"
 import appPromise from "app"
 import { Server } from "http"
 import { mongoDB } from "config"
+import { env } from "config/env"
 import { Db, ObjectID } from "mongodb"
+import jwt from "jsonwebtoken"
 
 describe("Form Service", () => {
 	let app: Server
+	let token: {
+		teacher: string
+		emotion: string
+		invalid: string
+	}
 	const formIds: string[] = []
+	const deletedUserIds: string[] = []
 	before(async () => {
 		app = await appPromise
+		const db = (await mongoDB.get()) as Db
+		const obj = [
+			{ id: "teacher11", password: "test", role: "teacher" },
+			{ id: "emotion01", password: "test", role: "emotion" },
+		]
+		await db.collection("user").insertMany(obj)
+		obj.forEach(x => deletedUserIds.push(x.id))
+		token = {
+			teacher: jwt.sign({ role: "teacher", id: "teacher11" }, env.JWT_SECRET),
+			emotion: jwt.sign({ role: "emotion", id: "emotion01" }, env.JWT_SECRET),
+			invalid: jwt.sign({ role: "teacher", id: "01010100" }, env.JWT_SECRET),
+		}
 	})
 
 	describe("Mutation createForm", () => {
@@ -154,51 +174,71 @@ describe("Form Service", () => {
 				}
 			}
 		`
-		it("Successful request (empty cursor) / Should be return FormConnection type", async () => {
-			const { body } = await request(app)
-				.post("/api")
-				.set("Content-Type", "application/json")
-				.send(JSON.stringify({ query, variables: { club: "emotion", offset: 1 } }))
-				.expect(200)
-			const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
-			deepEqual(totalCount, 2)
-			deepEqual(pageInfo.hasNextPage, true)
-			deepEqual(pageInfo.startCursor, null)
-			deepEqual(pageInfo.endCursor, edges[0].cursor)
-			deepEqual(edges.length, 1)
+
+		describe("Success", () => {
+			it("Successful request (empty cursor) / Should be return FormConnection type", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.emotion}`)
+					.send(JSON.stringify({ query, variables: { club: "emotion", offset: 1 } }))
+					.expect(200)
+				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
+				deepEqual(totalCount, 2)
+				deepEqual(pageInfo.hasNextPage, true)
+				deepEqual(pageInfo.startCursor, null)
+				deepEqual(pageInfo.endCursor, edges[0].cursor)
+				deepEqual(edges.length, 1)
+			})
+
+			it("Successful request (first cursor) / Should be return FormConnection type", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.teacher}`)
+					.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[0], offset: 1 } }))
+					.expect(200)
+				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
+				deepEqual(totalCount, 2)
+				deepEqual(pageInfo.hasNextPage, true)
+				deepEqual(pageInfo.startCursor, formIds[0])
+				deepEqual(pageInfo.endCursor, edges[0].cursor)
+				deepEqual(edges.length, 1)
+			})
+
+			it("Successful request (last cursor) / Should be return FormConnection type", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.teacher}`)
+					.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[1], offset: 1 } }))
+					.expect(200)
+				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
+				deepEqual(totalCount, 2)
+				deepEqual(pageInfo.hasNextPage, false)
+				deepEqual(pageInfo.startCursor, formIds[1])
+				deepEqual(pageInfo.endCursor, null)
+				deepEqual(edges.length, 0)
+			})
 		})
 
-		it("Successful request (first cursor) / Should be return FormConnection type", async () => {
-			const { body } = await request(app)
-				.post("/api")
-				.set("Content-Type", "application/json")
-				.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[0], offset: 1 } }))
-				.expect(200)
-			const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
-			deepEqual(totalCount, 2)
-			deepEqual(pageInfo.hasNextPage, true)
-			deepEqual(pageInfo.startCursor, formIds[0])
-			deepEqual(pageInfo.endCursor, edges[0].cursor)
-			deepEqual(edges.length, 1)
-		})
-
-		it("Successful request (last cursor) / Should be return FormConnection type", async () => {
-			const { body } = await request(app)
-				.post("/api")
-				.set("Content-Type", "application/json")
-				.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[1], offset: 1 } }))
-				.expect(200)
-			const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
-			deepEqual(totalCount, 2)
-			deepEqual(pageInfo.hasNextPage, false)
-			deepEqual(pageInfo.startCursor, formIds[1])
-			deepEqual(pageInfo.endCursor, null)
-			deepEqual(edges.length, 0)
+		describe("Failure", () => {
+			it("Failed request (empty authorization headers) / Should be return errors", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.send(JSON.stringify({ query, variables: { club: "emotion", offset: 1 } }))
+					.expect(200)
+				deepEqual(body.errors[0].message, "Not Authorised!")
+			})
 		})
 	})
 
 	after(async () => {
 		const db = (await mongoDB.get()) as Db
-		await db.collection("form").deleteMany({ _id: { $in: formIds.map(id => new ObjectID(id)) } })
+		await Promise.all([
+			db.collection("form").deleteMany({ _id: { $in: formIds.map(id => new ObjectID(id)) } }),
+			db.collection("user").deleteMany({ _id: { $in: deletedUserIds } }),
+		])
 	})
 })

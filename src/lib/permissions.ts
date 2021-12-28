@@ -1,10 +1,10 @@
 import { shield, rule, and } from "graphql-shield"
 import { Context, redis } from "config"
-import { ApolloError, UserInputError } from "apollo-server-express"
-import { CreateFormInput } from "resolvers/app/form/models"
+import { ApolloError } from "apollo-server-express"
+import { MutationCreateFormArgs } from "config/models"
 import { validEmotion } from "./validForm"
 
-const isValidForm = rule()(async (parent: void, args: CreateFormInput, context: Context) => {
+const isValidForm = rule()(async (parent: void, args: MutationCreateFormArgs, context: Context) => {
 	if (args.input.club === "emotion") return validEmotion(args.input.answerList)
 	else return true
 })
@@ -23,12 +23,24 @@ const canSubmit = rule()(async (parent: void, args: void, context: Context) => {
 	return true
 })
 
+const isValidQuery = rule()(async (parent: void, args: { club?: string }, context: Context) => {
+	const id = context.user?.id
+	const role = context.user?.role
+	if (role === "teacher" || role === args.club) {
+		const ret = (await context.db.collection("user").findOne({ id: id })) !== null
+		return ret
+	}
+	return false
+})
+
 export const permissions = shield(
 	{
 		Mutation: {
 			createForm: and(isValidForm, canSubmit),
 		},
-		Query: {},
+		Query: {
+			getFormByClub: isValidQuery,
+		},
 	},
 	{ allowExternalErrors: true }
 )
