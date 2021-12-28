@@ -21,6 +21,8 @@ export type Scalars = {
   URL: any;
   /** 학번 eg) 10311 이는 1학년 3반 11번을 나타냅니다 */
   StudentID: any;
+  /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
+  ObjectID: any;
   data_String_NotNull_pattern_ping: any;
   /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   BigInt: any;
@@ -128,8 +130,6 @@ export type Scalars = {
   NonPositiveFloat: any;
   /** Integers that will have a value of 0 or less. */
   NonPositiveInt: any;
-  /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
-  ObjectID: any;
   /** A field whose value conforms to the standard E.164 format as specified in: https://en.wikipedia.org/wiki/E.164. Basically this is +17895551234. */
   PhoneNumber: any;
   /** A field whose value is a valid TCP port within the range of 0 to 65535: https://en.wikipedia.org/wiki/Transmission_Control_Protocol#TCP_ports */
@@ -200,6 +200,7 @@ export type Form = {
   __typename?: 'Form';
   answerList: Array<Maybe<Scalars['String']>>;
   club: Scalars['String'];
+  formId: Scalars['ObjectID'];
   name: Scalars['String'];
   otherURLs: Array<Maybe<Scalars['URL']>>;
   portfolioURL?: Maybe<Scalars['URL']>;
@@ -306,6 +307,7 @@ export type ResolversTypes = {
   URL: ResolverTypeWrapper<Scalars['URL']>;
   StudentID: ResolverTypeWrapper<Scalars['StudentID']>;
   Form: ResolverTypeWrapper<Form>;
+  ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: ResolverTypeWrapper<Scalars['data_String_NotNull_pattern_ping']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -346,7 +348,6 @@ export type ResolversTypes = {
   NonNegativeInt: ResolverTypeWrapper<Scalars['NonNegativeInt']>;
   NonPositiveFloat: ResolverTypeWrapper<Scalars['NonPositiveFloat']>;
   NonPositiveInt: ResolverTypeWrapper<Scalars['NonPositiveInt']>;
-  ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
   PhoneNumber: ResolverTypeWrapper<Scalars['PhoneNumber']>;
   Port: ResolverTypeWrapper<Scalars['Port']>;
   PositiveFloat: ResolverTypeWrapper<Scalars['PositiveFloat']>;
@@ -380,6 +381,7 @@ export type ResolversParentTypes = {
   URL: Scalars['URL'];
   StudentID: Scalars['StudentID'];
   Form: Form;
+  ObjectID: Scalars['ObjectID'];
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: Scalars['data_String_NotNull_pattern_ping'];
   Boolean: Scalars['Boolean'];
@@ -419,7 +421,6 @@ export type ResolversParentTypes = {
   NonNegativeInt: Scalars['NonNegativeInt'];
   NonPositiveFloat: Scalars['NonPositiveFloat'];
   NonPositiveInt: Scalars['NonPositiveInt'];
-  ObjectID: Scalars['ObjectID'];
   PhoneNumber: Scalars['PhoneNumber'];
   Port: Scalars['Port'];
   PositiveFloat: Scalars['PositiveFloat'];
@@ -547,12 +548,17 @@ export interface StudentIdScalarConfig extends GraphQLScalarTypeConfig<Resolvers
 export type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
   answerList?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
   club?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  formId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   otherURLs?: Resolver<Array<Maybe<ResolversTypes['URL']>>, ParentType, ContextType>;
   portfolioURL?: Resolver<Maybe<ResolversTypes['URL']>, ParentType, ContextType>;
   studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectID'], any> {
+  name: 'ObjectID';
+}
 
 export interface Data_String_NotNull_Pattern_PingScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['data_String_NotNull_pattern_ping'], any> {
   name: 'data_String_NotNull_pattern_ping';
@@ -701,10 +707,6 @@ export interface NonPositiveIntScalarConfig extends GraphQLScalarTypeConfig<Reso
   name: 'NonPositiveInt';
 }
 
-export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectID'], any> {
-  name: 'ObjectID';
-}
-
 export interface PhoneNumberScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['PhoneNumber'], any> {
   name: 'PhoneNumber';
 }
@@ -782,6 +784,7 @@ export type Resolvers<ContextType = any> = {
   URL?: GraphQLScalarType;
   StudentID?: GraphQLScalarType;
   Form?: FormResolvers<ContextType>;
+  ObjectID?: GraphQLScalarType;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;
   BigInt?: GraphQLScalarType;
   Byte?: GraphQLScalarType;
@@ -818,7 +821,6 @@ export type Resolvers<ContextType = any> = {
   NonNegativeInt?: GraphQLScalarType;
   NonPositiveFloat?: GraphQLScalarType;
   NonPositiveInt?: GraphQLScalarType;
-  ObjectID?: GraphQLScalarType;
   PhoneNumber?: GraphQLScalarType;
   Port?: GraphQLScalarType;
   PositiveFloat?: GraphQLScalarType;

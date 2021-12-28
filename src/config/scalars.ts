@@ -10,7 +10,7 @@ const isValidStudentID = (value: any) => {
 	if (!(10101 <= value && value <= 10350)) {
 		throw new UserInputError("잘못된 학번입니다 학번은 10101 ~ 10350 사이입니다")
 	}
-	return true
+	return value
 }
 
 export const StudentID = new GraphQLScalarType({
@@ -27,7 +27,7 @@ export const StudentID = new GraphQLScalarType({
 })
 
 const isValidClub = (value: any) => {
-	const regex = /^(nefus|layer7|unifox|teamlog|emotion))$/
+	const regex = /^(nefus|layer7|unifox|teamlog|emotion)$/
 	if (typeof value !== "string") {
 		throw new UserInputError("동아리는 string 타입이여야 합니다")
 	}

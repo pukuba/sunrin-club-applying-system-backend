@@ -8,6 +8,7 @@ type Form {
     answerList: [String]!
     portfolioURL: URL
     otherURLs: [URL]!
+    formId: ObjectID!
 }
 
 input CreateFormInput {

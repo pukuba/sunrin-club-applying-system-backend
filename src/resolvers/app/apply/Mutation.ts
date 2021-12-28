@@ -8,6 +8,6 @@ export const createForm = async (parent: void, args: CreateFormInput, context: C
 		portfolioURL: portfolioURL?.href,
 		...data,
 	}
-	await context.db.collection("form").insertOne(document)
-	return document
+	const { insertedId: formId } = await context.db.collection("form").insertOne(document)
+	return { ...document, formId }
 }
