@@ -66,7 +66,7 @@ describe("Form Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "답변의 길이가 초과되었습니다. 글자 수 제한 문항별: 300, 500, 1000자")
+				deepEqual(body.errors[0].message.startsWith("답변의 길이가 초과되었습니다."), true)
 			})
 
 			it("Failed request (invalid answerList length) / Should be return errors", async () => {
