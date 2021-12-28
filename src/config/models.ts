@@ -171,6 +171,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   getFormByClub: FormConnection;
+  getFormByStudentId: FormConnection;
   healthLive: Scalars['DateTime'];
 };
 
@@ -179,6 +180,13 @@ export type QueryGetFormByClubArgs = {
   club: Scalars['Club'];
   cursor?: InputMaybe<Scalars['ObjectID']>;
   offset?: Scalars['Int'];
+};
+
+
+export type QueryGetFormByStudentIdArgs = {
+  cursor?: InputMaybe<Scalars['ObjectID']>;
+  offset?: Scalars['Int'];
+  studentId: Scalars['StudentID'];
 };
 
 export type FormConnection = {
@@ -580,6 +588,7 @@ export type ConstraintDirectiveResolver<Result, Parent, ContextType = any, Args 
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getFormByClub?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club' | 'offset'>>;
+  getFormByStudentId?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByStudentIdArgs, 'offset' | 'studentId'>>;
   healthLive?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 

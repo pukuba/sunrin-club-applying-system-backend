@@ -19,6 +19,13 @@ export interface Context {
 	} | null
 }
 
+export interface RequiredContext extends Context {
+	user: {
+		id: string
+		role: "teamlog" | "teacher" | "emotion" | "layer7" | "nefus" | "unifox"
+	}
+}
+
 export { ObjectID }
 
 export interface PaginationInput {

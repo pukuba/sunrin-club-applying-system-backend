@@ -35,6 +35,13 @@ extend type Query {
         offset: Int! = 10
         cursor: ObjectID
     ): FormConnection!
+
+    # 학번으로 신청서를 가져옵니다
+    getFormByStudentId(
+        studentId: StudentID!
+        offset: Int! = 10
+        cursor: ObjectID
+    ): FormConnection!
 }
 
 type FormEdge {
