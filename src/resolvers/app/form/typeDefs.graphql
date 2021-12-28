@@ -32,5 +32,18 @@ extend type Query {
     # 동아리 별로 신청서를 가져옵니다
     getFormByClub(
         club: Club!
-    ): [Form]!
+        offset: Int! = 10
+        cursor: ObjectID
+    ): FormResult!
+}
+
+type FormEdge {
+    node: Form!
+    cursor: ObjectID!
+}
+
+type FormResult {
+    totalCount: Int!
+    edges: [FormEdge]!
+    pageInfo: PageInfo
 }

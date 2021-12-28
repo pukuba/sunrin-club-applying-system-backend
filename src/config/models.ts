@@ -14,10 +14,10 @@ export type Scalars = {
   Float: number;
   /** 동아리 eg) nefus, layer7, unifox, teamlog, emotion */
   Club: any;
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: any;
   /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
   ObjectID: any;
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  DateTime: any;
   /** A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt. */
   URL: any;
   /** 학번 eg) 10311 이는 1학년 3반 11번을 나타냅니다 */
@@ -170,13 +170,28 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  getFormByClub: Array<Maybe<Form>>;
+  getFormByClub: FormResult;
   healthLive: Scalars['DateTime'];
 };
 
 
 export type QueryGetFormByClubArgs = {
   club: Scalars['Club'];
+  cursor?: InputMaybe<Scalars['ObjectID']>;
+  offset?: Scalars['Int'];
+};
+
+export type FormResult = {
+  __typename?: 'FormResult';
+  edges: Array<Maybe<FormEdge>>;
+  pageInfo?: Maybe<PageInfo>;
+  totalCount: Scalars['Int'];
+};
+
+export type FormEdge = {
+  __typename?: 'FormEdge';
+  cursor: Scalars['ObjectID'];
+  node: Form;
 };
 
 export type Form = {
@@ -189,6 +204,12 @@ export type Form = {
   otherURLs: Array<Maybe<Scalars['URL']>>;
   portfolioURL?: Maybe<Scalars['URL']>;
   studentId: Scalars['StudentID'];
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  hasNextPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['ObjectID']>;
 };
 
 export type Mutation = {
@@ -325,12 +346,17 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   Club: ResolverTypeWrapper<Scalars['Club']>;
+  ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  FormResult: ResolverTypeWrapper<FormResult>;
+  FormEdge: ResolverTypeWrapper<FormEdge>;
   Form: ResolverTypeWrapper<Form>;
   String: ResolverTypeWrapper<Scalars['String']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-  ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
   URL: ResolverTypeWrapper<Scalars['URL']>;
   StudentID: ResolverTypeWrapper<Scalars['StudentID']>;
+  PageInfo: ResolverTypeWrapper<PageInfo>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Mutation: ResolverTypeWrapper<{}>;
   CreateFormInput: CreateFormInput;
   name_String_NotNull_maxLength_5: ResolverTypeWrapper<Scalars['name_String_NotNull_maxLength_5']>;
@@ -341,7 +367,6 @@ export type ResolversTypes = {
   password_String_NotNull_maxLength_30: ResolverTypeWrapper<Scalars['password_String_NotNull_maxLength_30']>;
   User: ResolverTypeWrapper<User>;
   JWT: ResolverTypeWrapper<Scalars['JWT']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
   Byte: ResolverTypeWrapper<Scalars['Byte']>;
@@ -395,7 +420,6 @@ export type ResolversTypes = {
   UtcOffset: ResolverTypeWrapper<Scalars['UtcOffset']>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   Void: ResolverTypeWrapper<Scalars['Void']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
 };
 
@@ -403,12 +427,17 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Query: {};
   Club: Scalars['Club'];
+  ObjectID: Scalars['ObjectID'];
+  Int: Scalars['Int'];
+  FormResult: FormResult;
+  FormEdge: FormEdge;
   Form: Form;
   String: Scalars['String'];
   DateTime: Scalars['DateTime'];
-  ObjectID: Scalars['ObjectID'];
   URL: Scalars['URL'];
   StudentID: Scalars['StudentID'];
+  PageInfo: PageInfo;
+  Boolean: Scalars['Boolean'];
   Mutation: {};
   CreateFormInput: CreateFormInput;
   name_String_NotNull_maxLength_5: Scalars['name_String_NotNull_maxLength_5'];
@@ -419,7 +448,6 @@ export type ResolversParentTypes = {
   password_String_NotNull_maxLength_30: Scalars['password_String_NotNull_maxLength_30'];
   User: User;
   JWT: Scalars['JWT'];
-  Boolean: Scalars['Boolean'];
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: Scalars['BigInt'];
   Byte: Scalars['Byte'];
@@ -472,7 +500,6 @@ export type ResolversParentTypes = {
   UtcOffset: Scalars['UtcOffset'];
   UUID: Scalars['UUID'];
   Void: Scalars['Void'];
-  Int: Scalars['Int'];
   Float: Scalars['Float'];
 };
 
@@ -551,13 +578,30 @@ export type ConstraintDirectiveArgs = {
 export type ConstraintDirectiveResolver<Result, Parent, ContextType = any, Args = ConstraintDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getFormByClub?: Resolver<Array<Maybe<ResolversTypes['Form']>>, ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club'>>;
+  getFormByClub?: Resolver<ResolversTypes['FormResult'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club' | 'offset'>>;
   healthLive?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
 export interface ClubScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Club'], any> {
   name: 'Club';
 }
+
+export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectID'], any> {
+  name: 'ObjectID';
+}
+
+export type FormResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormResult'] = ResolversParentTypes['FormResult']> = {
+  edges?: Resolver<Array<Maybe<ResolversTypes['FormEdge']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FormEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormEdge'] = ResolversParentTypes['FormEdge']> = {
+  cursor?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Form'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
   answerList?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -575,10 +619,6 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
-export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectID'], any> {
-  name: 'ObjectID';
-}
-
 export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['URL'], any> {
   name: 'URL';
 }
@@ -586,6 +626,12 @@ export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
 export interface StudentIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['StudentID'], any> {
   name: 'StudentID';
 }
+
+export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  startCursor?: Resolver<Maybe<ResolversTypes['ObjectID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
@@ -829,11 +875,14 @@ export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Club?: GraphQLScalarType;
+  ObjectID?: GraphQLScalarType;
+  FormResult?: FormResultResolvers<ContextType>;
+  FormEdge?: FormEdgeResolvers<ContextType>;
   Form?: FormResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
-  ObjectID?: GraphQLScalarType;
   URL?: GraphQLScalarType;
   StudentID?: GraphQLScalarType;
+  PageInfo?: PageInfoResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   name_String_NotNull_maxLength_5?: GraphQLScalarType;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;

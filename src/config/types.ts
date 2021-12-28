@@ -16,3 +16,8 @@ export interface Context {
 }
 
 export { ObjectID }
+
+export interface PaginationInput {
+	offset: number
+	cursor: string | null
+}

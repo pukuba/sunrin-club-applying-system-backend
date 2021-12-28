@@ -8,3 +8,19 @@ export interface CreateFormInput {
 		otherURLs: URL[]
 	}
 }
+
+import { PaginationInput, ObjectID } from "config"
+
+export interface GetFormByClubInput extends PaginationInput {
+	club: "nefus" | "layer7" | "unifox" | "teamlog" | "emotion"
+}
+
+export type GetFormByClubQuery = [
+	{
+		$match: {
+			club: "nefus" | "layer7" | "unifox" | "teamlog" | "emotion"
+			$gt?: ObjectID
+		}
+	},
+	{ $limit: number }
+]
