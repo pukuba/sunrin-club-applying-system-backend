@@ -24,6 +24,7 @@ describe("Form Service", () => {
 						portfolioURL
 						otherURLs
 						formId
+						date
 					}
 				}
 			`
@@ -42,9 +43,10 @@ describe("Form Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				const { formId, ...data } = body.data.createForm as Form
+				const { formId, date, ...data } = body.data.createForm as Form
 				deletedIds.push(formId)
 				deepEqual(data, input)
+				deepEqual(typeof date, "string")
 			})
 		})
 

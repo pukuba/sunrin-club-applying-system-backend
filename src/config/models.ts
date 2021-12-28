@@ -12,17 +12,17 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: any;
   /** 동아리 eg) nefus, layer7, unifox, teamlog, emotion */
   Club: any;
-  name_String_NotNull_maxLength_5: any;
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  DateTime: any;
+  /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
+  ObjectID: any;
   /** A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt. */
   URL: any;
   /** 학번 eg) 10311 이는 1학년 3반 11번을 나타냅니다 */
   StudentID: any;
-  /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
-  ObjectID: any;
+  name_String_NotNull_maxLength_5: any;
   data_String_NotNull_pattern_ping: any;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: any;
   password_String_NotNull_maxLength_30: any;
@@ -170,7 +170,25 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  getFormByClub: Array<Maybe<Form>>;
   healthLive: Scalars['DateTime'];
+};
+
+
+export type QueryGetFormByClubArgs = {
+  club: Scalars['Club'];
+};
+
+export type Form = {
+  __typename?: 'Form';
+  answerList: Array<Maybe<Scalars['String']>>;
+  club: Scalars['String'];
+  date: Scalars['DateTime'];
+  formId: Scalars['ObjectID'];
+  name: Scalars['String'];
+  otherURLs: Array<Maybe<Scalars['URL']>>;
+  portfolioURL?: Maybe<Scalars['URL']>;
+  studentId: Scalars['StudentID'];
 };
 
 export type Mutation = {
@@ -201,17 +219,6 @@ export type CreateFormInput = {
   name: Scalars['name_String_NotNull_maxLength_5'];
   otherURLs: Array<InputMaybe<Scalars['URL']>>;
   portfolioURL?: InputMaybe<Scalars['URL']>;
-  studentId: Scalars['StudentID'];
-};
-
-export type Form = {
-  __typename?: 'Form';
-  answerList: Array<Maybe<Scalars['String']>>;
-  club: Scalars['String'];
-  formId: Scalars['ObjectID'];
-  name: Scalars['String'];
-  otherURLs: Array<Maybe<Scalars['URL']>>;
-  portfolioURL?: Maybe<Scalars['URL']>;
   studentId: Scalars['StudentID'];
 };
 
@@ -317,16 +324,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
-  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-  Mutation: ResolverTypeWrapper<{}>;
-  CreateFormInput: CreateFormInput;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Club: ResolverTypeWrapper<Scalars['Club']>;
-  name_String_NotNull_maxLength_5: ResolverTypeWrapper<Scalars['name_String_NotNull_maxLength_5']>;
+  Form: ResolverTypeWrapper<Form>;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
   URL: ResolverTypeWrapper<Scalars['URL']>;
   StudentID: ResolverTypeWrapper<Scalars['StudentID']>;
-  Form: ResolverTypeWrapper<Form>;
-  ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
+  Mutation: ResolverTypeWrapper<{}>;
+  CreateFormInput: CreateFormInput;
+  name_String_NotNull_maxLength_5: ResolverTypeWrapper<Scalars['name_String_NotNull_maxLength_5']>;
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: ResolverTypeWrapper<Scalars['data_String_NotNull_pattern_ping']>;
   LoginInput: LoginInput;
@@ -395,16 +402,16 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {};
-  DateTime: Scalars['DateTime'];
-  Mutation: {};
-  CreateFormInput: CreateFormInput;
-  String: Scalars['String'];
   Club: Scalars['Club'];
-  name_String_NotNull_maxLength_5: Scalars['name_String_NotNull_maxLength_5'];
+  Form: Form;
+  String: Scalars['String'];
+  DateTime: Scalars['DateTime'];
+  ObjectID: Scalars['ObjectID'];
   URL: Scalars['URL'];
   StudentID: Scalars['StudentID'];
-  Form: Form;
-  ObjectID: Scalars['ObjectID'];
+  Mutation: {};
+  CreateFormInput: CreateFormInput;
+  name_String_NotNull_maxLength_5: Scalars['name_String_NotNull_maxLength_5'];
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: Scalars['data_String_NotNull_pattern_ping'];
   LoginInput: LoginInput;
@@ -544,25 +551,32 @@ export type ConstraintDirectiveArgs = {
 export type ConstraintDirectiveResolver<Result, Parent, ContextType = any, Args = ConstraintDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getFormByClub?: Resolver<Array<Maybe<ResolversTypes['Form']>>, ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club'>>;
   healthLive?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-};
-
-export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
-  name: 'DateTime';
-}
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
-  healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
-  login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
 };
 
 export interface ClubScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Club'], any> {
   name: 'Club';
 }
 
-export interface Name_String_NotNull_MaxLength_5ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['name_String_NotNull_maxLength_5'], any> {
-  name: 'name_String_NotNull_maxLength_5';
+export type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
+  answerList?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
+  club?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  formId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  otherURLs?: Resolver<Array<Maybe<ResolversTypes['URL']>>, ParentType, ContextType>;
+  portfolioURL?: Resolver<Maybe<ResolversTypes['URL']>, ParentType, ContextType>;
+  studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
+export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectID'], any> {
+  name: 'ObjectID';
 }
 
 export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['URL'], any> {
@@ -573,19 +587,14 @@ export interface StudentIdScalarConfig extends GraphQLScalarTypeConfig<Resolvers
   name: 'StudentID';
 }
 
-export type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
-  answerList?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
-  club?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  formId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  otherURLs?: Resolver<Array<Maybe<ResolversTypes['URL']>>, ParentType, ContextType>;
-  portfolioURL?: Resolver<Maybe<ResolversTypes['URL']>, ParentType, ContextType>;
-  studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
+  healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
+  login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
 };
 
-export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectID'], any> {
-  name: 'ObjectID';
+export interface Name_String_NotNull_MaxLength_5ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['name_String_NotNull_maxLength_5'], any> {
+  name: 'name_String_NotNull_maxLength_5';
 }
 
 export interface Data_String_NotNull_Pattern_PingScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['data_String_NotNull_pattern_ping'], any> {
@@ -819,14 +828,14 @@ export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
-  DateTime?: GraphQLScalarType;
-  Mutation?: MutationResolvers<ContextType>;
   Club?: GraphQLScalarType;
-  name_String_NotNull_maxLength_5?: GraphQLScalarType;
+  Form?: FormResolvers<ContextType>;
+  DateTime?: GraphQLScalarType;
+  ObjectID?: GraphQLScalarType;
   URL?: GraphQLScalarType;
   StudentID?: GraphQLScalarType;
-  Form?: FormResolvers<ContextType>;
-  ObjectID?: GraphQLScalarType;
+  Mutation?: MutationResolvers<ContextType>;
+  name_String_NotNull_maxLength_5?: GraphQLScalarType;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher?: GraphQLScalarType;
   password_String_NotNull_maxLength_30?: GraphQLScalarType;

@@ -9,6 +9,7 @@ type Form {
     portfolioURL: URL
     otherURLs: [URL]!
     formId: ObjectID!
+    date: DateTime!
 }
 
 input CreateFormInput {
@@ -24,4 +25,12 @@ extend type Mutation {
     createForm(
         input: CreateFormInput!
     ): Form!
+}
+
+extend type Query {
+
+    # 동아리 별로 신청서를 가져옵니다
+    getFormByClub(
+        club: Club!
+    ): [Form]!
 }
