@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 dotenv.config()
 
-import { env, mongoDB } from "config"
+import { env, mongoDB, redis } from "config"
 import { express as voyagerMiddleware } from "graphql-voyager/middleware"
 import { ApolloServer } from "apollo-server-express"
 import { createServer, Server } from "http"
@@ -46,8 +46,9 @@ export default (async () => {
 	const db = await mongoDB.get()
 	const server = new ApolloServer({
 		schema: applyMiddleware(schema, permissions),
-		context: () => {
-			return { db }
+		context: ({ req }) => {
+			const ip = req.headers["x-forwarded-for"] || req.headers["CF-Connecting-IP"] || req.socket.remoteAddress
+			return { db, redis, ip }
 		},
 		validationRules: [depthLimit(8)],
 		debug: env.NODE_ENV !== "production",

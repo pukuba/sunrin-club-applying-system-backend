@@ -5,7 +5,7 @@ let db: Db | null = null
 const connectDB = () => {
 	const connect = async () => {
 		try {
-			const client = await MongoClient.connect(process.env.DB_HOST || env.DB_HOST, {
+			const client = await MongoClient.connect(process.env.DB_HOST || env.MONGO_HOST, {
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
 			})
@@ -35,3 +35,24 @@ const connectDB = () => {
 }
 
 export const mongoDB = connectDB()
+
+import { createClient, OverloadedCommand } from "redis"
+
+declare module "util" {
+	function promisify<T, U, R>(
+		fn: OverloadedCommand<T, U, R>
+	): {
+		(arg1: T, arg2: T | T[]): Promise<U>
+		(arg1: T | T[]): Promise<U>
+		(...args: Array<T>): Promise<U>
+	}
+}
+
+import { promisify } from "util"
+
+const redisClient = createClient(env.REDIS_HOST)
+export const redis = {
+	get: promisify(redisClient.get).bind(redisClient),
+	setex: promisify(redisClient.setex).bind(redisClient),
+	del: promisify(redisClient.del).bind(redisClient),
+}

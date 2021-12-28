@@ -7,8 +7,12 @@ export interface File {
 	createReadStream: () => ReadStream
 }
 
-import { Db } from "mongodb"
-
+import { Db, ObjectID } from "mongodb"
+import { redis as Redis } from "./connectDB"
 export interface Context {
 	db: Db
+	redis: typeof Redis
+	ip: string
 }
+
+export { ObjectID }
