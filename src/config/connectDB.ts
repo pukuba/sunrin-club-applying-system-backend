@@ -57,4 +57,6 @@ export const redis = {
 	del: promisify(redisClient.del).bind(redisClient),
 	ttl: promisify(redisClient.ttl).bind(redisClient),
 	incr: promisify(redisClient.incr).bind(redisClient),
+	publish: promisify(redisClient.publish).bind(redisClient),
+	subscribe: promisify(redisClient.subscribe).bind(redisClient),
 }

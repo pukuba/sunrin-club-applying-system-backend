@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 import { env } from "config/env"
-import { mongoDB, redis, logOptions } from "config"
+import { mongoDB, redis, logOptions, formatError } from "config"
 import { express as voyagerMiddleware } from "graphql-voyager/middleware"
 import { ApolloServer } from "apollo-server-express"
 import { createServer, Server } from "http"
@@ -57,6 +57,7 @@ export default (async () => {
 		debug: env.NODE_ENV !== "production",
 		introspection: env.NODE_ENV !== "production",
 		plugins: logOptions,
+		formatError: formatError,
 	})
 
 	await server.start()
