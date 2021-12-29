@@ -9,7 +9,12 @@ export const login = async (parent: void, args: MutationLoginArgs, context: Cont
 	const { id, password } = args.input
 	const user = await context.db.collection("user").findOne({ id, password })
 	if (user === null) {
-		throw new ApolloError("아이디 혹은 비밀번호가 잘못되었습니다")
+		throw new ApolloError("아이디 혹은 비밀번호가 잘못되었습니다", undefined, {
+			ip: context.ip,
+			action: "로그인",
+			message: `아이디 혹은 비밀번호 오류 (아이디 : ${id})`,
+			role: "unknown",
+		})
 	}
 	const token = jwt.sign({ role: user.role, id: id }, env.JWT_SECRET)
 	return {

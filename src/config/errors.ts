@@ -14,6 +14,7 @@ export const formatError = (error: GraphQLError) => {
 		mongoDB.get().then(async db => {
 			await (db as Db).collection("history").insertOne(log)
 		})
+		;(error.extensions as { [key: string]: any } | undefined) = { code, exception }
 	}
 	return error
 }
