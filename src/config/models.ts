@@ -29,6 +29,8 @@ export type Scalars = {
   password_String_NotNull_maxLength_30: any;
   /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
   JWT: any;
+  message_String_NotNull_maxLength_80: any;
+  phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098: any;
   /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   BigInt: any;
   /** The `Byte` scalar type represents byte value as a Buffer */
@@ -247,6 +249,7 @@ export type Mutation = {
   createForm: Form;
   healthCheck: Scalars['String'];
   login: User;
+  sendMessage: Scalars['Boolean'];
 };
 
 
@@ -262,6 +265,11 @@ export type MutationHealthCheckArgs = {
 
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+
+export type MutationSendMessageArgs = {
+  input: SendMessageInput;
 };
 
 export type CreateFormInput = {
@@ -287,6 +295,11 @@ export type User = {
   __typename?: 'User';
   role: Scalars['String'];
   token: Scalars['JWT'];
+};
+
+export type SendMessageInput = {
+  message: Scalars['message_String_NotNull_maxLength_80'];
+  phoneNumberList: Array<Scalars['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098']>;
 };
 
 export type AdditionalEntityFields = {
@@ -401,6 +414,9 @@ export type ResolversTypes = {
   password_String_NotNull_maxLength_30: ResolverTypeWrapper<Scalars['password_String_NotNull_maxLength_30']>;
   User: ResolverTypeWrapper<User>;
   JWT: ResolverTypeWrapper<Scalars['JWT']>;
+  SendMessageInput: SendMessageInput;
+  message_String_NotNull_maxLength_80: ResolverTypeWrapper<Scalars['message_String_NotNull_maxLength_80']>;
+  phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098: ResolverTypeWrapper<Scalars['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098']>;
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
   Byte: ResolverTypeWrapper<Scalars['Byte']>;
@@ -485,6 +501,9 @@ export type ResolversParentTypes = {
   password_String_NotNull_maxLength_30: Scalars['password_String_NotNull_maxLength_30'];
   User: User;
   JWT: Scalars['JWT'];
+  SendMessageInput: SendMessageInput;
+  message_String_NotNull_maxLength_80: Scalars['message_String_NotNull_maxLength_80'];
+  phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098: Scalars['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098'];
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: Scalars['BigInt'];
   Byte: Scalars['Byte'];
@@ -700,6 +719,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
   healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
   login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
+  sendMessage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'input'>>;
 };
 
 export interface Data_String_NotNull_Pattern_PingScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['data_String_NotNull_pattern_ping'], any> {
@@ -722,6 +742,14 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export interface JwtScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JWT'], any> {
   name: 'JWT';
+}
+
+export interface Message_String_NotNull_MaxLength_80ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['message_String_NotNull_maxLength_80'], any> {
+  name: 'message_String_NotNull_maxLength_80';
+}
+
+export interface PhoneNumberList_List_ListNotNull_String_NotNull_Pattern_010098ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098'], any> {
+  name: 'phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098';
 }
 
 export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['BigInt'], any> {
@@ -952,6 +980,8 @@ export type Resolvers<ContextType = any> = {
   password_String_NotNull_maxLength_30?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   JWT?: GraphQLScalarType;
+  message_String_NotNull_maxLength_80?: GraphQLScalarType;
+  phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098?: GraphQLScalarType;
   BigInt?: GraphQLScalarType;
   Byte?: GraphQLScalarType;
   Currency?: GraphQLScalarType;

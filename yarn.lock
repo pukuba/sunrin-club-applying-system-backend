@@ -3450,10 +3450,10 @@ graphql-config@^4.1.0:
     minimatch "3.0.4"
     string-env-interpolation "1.0.1"
 
-graphql-constraint-directive@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/graphql-constraint-directive/-/graphql-constraint-directive-2.2.0.tgz#99d316c86e41562d4d805fa6f5834abb5ef082b1"
-  integrity sha512-cP4pjEceEh3F6PLVObDjo73zbHM6SyeYHYstoFWKBKl0pM5K0NoGSXZgtEVSxfpiXNcBm21GmcnJryf4y4JFlw==
+graphql-constraint-directive@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/graphql-constraint-directive/-/graphql-constraint-directive-2.3.0.tgz#b1511511e7c62e7247dd394dc093931d65d77ff0"
+  integrity sha512-KIrYBvmDd3CN6SvndUa2KaW4IK8AS1BJJRMr7CKh7ShtInfu1alEQW7xbAhmFwoj0TIWIOuiMNLiOaDyLOheuQ==
   dependencies:
     "@graphql-tools/schema" "^6.0.9"
     "@graphql-tools/utils" "^6.0.9"

@@ -1,0 +1,10 @@
+extend type Mutation {
+    sendMessage(
+        input: SendMessageInput!
+    ): Boolean!
+}
+
+input SendMessageInput {
+    message: String! @constraint(maxLength: 80)
+    phoneNumberList: [String!]! @constraint(pattern: "^010([0-9]{8})$")
+}
