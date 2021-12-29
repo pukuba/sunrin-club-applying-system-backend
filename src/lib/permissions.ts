@@ -1,10 +1,14 @@
 import { shield, rule, and } from "graphql-shield"
 import { Context, redis } from "config"
-import { ApolloError } from "apollo-server-express"
+import { ApolloError, ForbiddenError } from "apollo-server-express"
 import { MutationCreateFormArgs, MutationSendVerifyCodeArgs } from "config/models"
 import { validEmotion } from "./validForm"
 
 const isValidForm = rule()(async (parent: void, args: MutationCreateFormArgs, context: Context) => {
+	const isBlacked = await context.redis.get(`blacklist:${args.input.verifyToken}`)
+	if (isBlacked) {
+		return new ForbiddenError("토큰을 사용할수 없습니다. 다시 인증해주세요")
+	}
 	if (args.input.club === "emotion") return validEmotion(args.input.answerList)
 	else return true
 })

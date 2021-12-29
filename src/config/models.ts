@@ -287,9 +287,9 @@ export type CreateFormInput = {
   club: Scalars['Club'];
   name: Scalars['name_String_NotNull_maxLength_5'];
   otherURLs: Array<InputMaybe<Scalars['URL']>>;
-  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
   portfolioURL?: InputMaybe<Scalars['URL']>;
   studentId: Scalars['StudentID'];
+  verifyToken: Scalars['JWT'];
 };
 
 export type HealthCheckInput = {

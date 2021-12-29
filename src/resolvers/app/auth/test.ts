@@ -92,7 +92,6 @@ describe("Auth Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				console.log(body)
 				deepEqual(body.data.sendVerifyCode, true)
 			})
 		})
@@ -108,7 +107,7 @@ describe("Auth Service", () => {
 			it("Successful request (valid verification code) / Should be return true", async () => {
 				const input = {
 					phoneNumber: "01000000000",
-					verifyCode: redis.get("verifyCode:01000000000"),
+					verifyCode: await redis.get("verifyCode:01000000000"),
 				}
 				const { body } = await request(app)
 					.post("/api")

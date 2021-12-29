@@ -29,7 +29,7 @@ input CreateFormInput {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
     club: Club!
-    phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
+    verifyToken: JWT!
     answerList: [String!]!
     portfolioURL: URL
     otherURLs: [URL]!

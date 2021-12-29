@@ -1,5 +1,5 @@
 import { Context, ObjectID, RequiredContext } from "config"
-import { MongoQuery, QueryOptions } from "./models"
+import { MongoQuery } from "./models"
 import { QueryGetFormByClubArgs, QueryGetFormByStudentIdArgs, QueryGetStudentByClubArgs } from "config/models"
 
 export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, context: Context) => {
