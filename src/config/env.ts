@@ -8,4 +8,5 @@ export const env = {
 	NCP_SECRET_KEY: process.env.NCP_SECRET_KEY || "",
 	NCP_SMS_KEY: process.env.NCP_SMS_KEY || "",
 	PHONE_NUMBER: process.env.PHONE_NUMBER || "",
+	MY_PHONE: process.env.MY_PHONE || "",
 }

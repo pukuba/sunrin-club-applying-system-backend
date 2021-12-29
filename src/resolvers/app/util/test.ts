@@ -1,0 +1,130 @@
+import { deepStrictEqual as deepEqual } from "assert"
+import request from "supertest"
+import { Form, FormConnection, Student } from "config/models"
+import appPromise from "app"
+import { Server } from "http"
+import { mongoDB, redis } from "config"
+import { env } from "config/env"
+import { Db, ObjectID } from "mongodb"
+import jwt from "jsonwebtoken"
+
+describe("Util Service", () => {
+	let app: Server
+	let token: {
+		teacher: string
+		invalid: string
+	}
+	const formIds: string[] = []
+	const deletedUserIds: string[] = []
+	before(async () => {
+		app = await appPromise
+		const db = (await mongoDB.get()) as Db
+		const obj = [{ id: "teacher11", password: "test", role: "teacher" }]
+		await db.collection("user").insertMany(obj)
+		obj.forEach(x => deletedUserIds.push(x.id))
+		token = {
+			teacher: jwt.sign({ role: "teacher", id: "teacher11" }, env.JWT_SECRET),
+			invalid: jwt.sign({ role: "teacher", id: "01010100" }, env.JWT_SECRET),
+		}
+	})
+
+	describe("Mutation sendMessage", () => {
+		const query = `
+            mutation ($input: SendMessageInput!) {
+                sendMessage(input: $input) 
+            }
+        `
+		describe("Success", () => {
+			it("Successful request (teacher11 auccount) / Should be return true", async () => {
+				const input = {
+					message: "sunrin test message",
+					phoneNumberList: [env.MY_PHONE],
+				}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.teacher}`)
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				deepEqual(body.data.sendMessage, true)
+			})
+		})
+
+		describe("Failure", () => {
+			it("Failed request (empty authorization header) / Should be return errors", async () => {
+				const input = {
+					message: "sunrin test message",
+					phoneNumberList: [env.MY_PHONE],
+				}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				deepEqual(body.errors[0].message, "Not Authorised!")
+			})
+
+			it("Failed request (invalid token) / Should be return errors", async () => {
+				const input = {
+					message: "sunrin test message",
+					phoneNumberList: [env.MY_PHONE],
+				}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.invalid}`)
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				deepEqual(body.errors[0].message, "Not Authorised!")
+			})
+
+			it("Failed request (invalid jwt) / Should be return errors", async () => {
+				const input = {
+					message: "sunrin test message",
+					phoneNumberList: [env.MY_PHONE],
+				}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer sunrin`)
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				deepEqual(body.errors[0].message, "Not Authorised!")
+			})
+
+			it("Failed request (payload is too large) / Should be return errors", async () => {
+				const input = {
+					message: "sunrin hi",
+					phoneNumberList: new Array(200).fill("01000000000"),
+				}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.teacher}`)
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				deepEqual(body.errors[0].message, "최대 100개의 번호만 입력 가능합니다")
+			})
+
+			it("Failed request (too many requests) / Should be return errors", async () => {
+				await redis.setex(`sms:teacher`, 10, "3")
+				const input = {
+					message: "실패해야하는 메세지",
+					phoneNumberList: [env.MY_PHONE],
+				}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.teacher}`)
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				deepEqual(body.errors[0].message, "전송 횟수 제한")
+			})
+		})
+	})
+
+	after(async () => {
+		const db = (await mongoDB.get()) as Db
+		await db.collection("user").deleteMany({ _id: { $in: deletedUserIds } })
+	})
+})
