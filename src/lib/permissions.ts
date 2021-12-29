@@ -1,32 +1,28 @@
 import { shield, rule, and } from "graphql-shield"
 import { Context, redis } from "config"
 import { ApolloError, ForbiddenError } from "apollo-server-express"
-import { MutationCreateFormArgs, MutationSendVerifyCodeArgs } from "config/models"
+import { MutationCreateFormArgs } from "config/models"
 import { validEmotion } from "./validForm"
 
 const isValidForm = rule()(async (parent: void, args: MutationCreateFormArgs, context: Context) => {
-	const isBlacked = await context.redis.get(`blacklist:${args.input.verifyToken}`)
-	if (isBlacked) {
-		return new ForbiddenError("토큰을 사용할수 없습니다. 다시 인증해주세요")
-	}
 	if (args.input.club === "emotion") return validEmotion(args.input.answerList)
 	else return true
 })
 
-const canSMS = rule()(async (parent: void, args: MutationSendVerifyCodeArgs, context: Context) => {
-	const ip = context.ip
-	const key = `sms:${ip}`
-	const count = await redis.get(key)
-	if (count === null) {
-		await redis.setex(key, 180, "1")
-		return true
-	}
-	if (parseInt(count, 10) < 5) {
-		await redis.incr(key)
-		return true
-	}
-	return new ApolloError("전송 횟수 제한")
-})
+// const canSMS = rule()(async (parent: void, args: MutationSendVerifyCodeArgs, context: Context) => {
+// 	const ip = context.ip
+// 	const key = `sms:${ip}`
+// 	const count = await redis.get(key)
+// 	if (count === null) {
+// 		await redis.setex(key, 180, "1")
+// 		return true
+// 	}
+// 	if (parseInt(count, 10) < 5) {
+// 		await redis.incr(key)
+// 		return true
+// 	}
+// 	return new ApolloError("전송 횟수 제한")
+// })
 
 const canSubmit = rule()(async (parent: void, args: void, context: Context) => {
 	const ip = context.ip
@@ -66,7 +62,6 @@ export const permissions = shield(
 	{
 		Mutation: {
 			createForm: and(isValidForm, canSubmit),
-			sendVerifyCode: canSMS,
 		},
 		Query: {
 			getFormByClub: isValidGetFormByClub,

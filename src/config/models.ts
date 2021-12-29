@@ -24,12 +24,11 @@ export type Scalars = {
   DateTime: any;
   /** A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt. */
   URL: any;
-  verifyCode_String_NotNull_pattern_096: any;
-  /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
-  JWT: any;
   data_String_NotNull_pattern_ping: any;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: any;
   password_String_NotNull_maxLength_30: any;
+  /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
+  JWT: any;
   /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   BigInt: any;
   /** The `Byte` scalar type represents byte value as a Buffer */
@@ -245,16 +244,9 @@ export type Student = StudentInfo & {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  checkVerifyCode: Scalars['JWT'];
   createForm: Form;
   healthCheck: Scalars['String'];
   login: User;
-  sendVerifyCode: Scalars['Boolean'];
-};
-
-
-export type MutationCheckVerifyCodeArgs = {
-  input: CheckVerifyCodeInput;
 };
 
 
@@ -272,24 +264,14 @@ export type MutationLoginArgs = {
   input: LoginInput;
 };
 
-
-export type MutationSendVerifyCodeArgs = {
-  input: SendVerifyCodeInput;
-};
-
-export type CheckVerifyCodeInput = {
-  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
-  verifyCode: Scalars['verifyCode_String_NotNull_pattern_096'];
-};
-
 export type CreateFormInput = {
   answerList: Array<Scalars['String']>;
   club: Scalars['Club'];
   name: Scalars['name_String_NotNull_maxLength_5'];
   otherURLs: Array<InputMaybe<Scalars['URL']>>;
+  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
   portfolioURL?: InputMaybe<Scalars['URL']>;
   studentId: Scalars['StudentID'];
-  verifyToken: Scalars['JWT'];
 };
 
 export type HealthCheckInput = {
@@ -305,10 +287,6 @@ export type User = {
   __typename?: 'User';
   role: Scalars['String'];
   token: Scalars['JWT'];
-};
-
-export type SendVerifyCodeInput = {
-  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
 };
 
 export type AdditionalEntityFields = {
@@ -415,9 +393,6 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Student: ResolverTypeWrapper<Student>;
   Mutation: ResolverTypeWrapper<{}>;
-  CheckVerifyCodeInput: CheckVerifyCodeInput;
-  verifyCode_String_NotNull_pattern_096: ResolverTypeWrapper<Scalars['verifyCode_String_NotNull_pattern_096']>;
-  JWT: ResolverTypeWrapper<Scalars['JWT']>;
   CreateFormInput: CreateFormInput;
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: ResolverTypeWrapper<Scalars['data_String_NotNull_pattern_ping']>;
@@ -425,7 +400,7 @@ export type ResolversTypes = {
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: ResolverTypeWrapper<Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher']>;
   password_String_NotNull_maxLength_30: ResolverTypeWrapper<Scalars['password_String_NotNull_maxLength_30']>;
   User: ResolverTypeWrapper<User>;
-  SendVerifyCodeInput: SendVerifyCodeInput;
+  JWT: ResolverTypeWrapper<Scalars['JWT']>;
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
   Byte: ResolverTypeWrapper<Scalars['Byte']>;
@@ -502,9 +477,6 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Student: Student;
   Mutation: {};
-  CheckVerifyCodeInput: CheckVerifyCodeInput;
-  verifyCode_String_NotNull_pattern_096: Scalars['verifyCode_String_NotNull_pattern_096'];
-  JWT: Scalars['JWT'];
   CreateFormInput: CreateFormInput;
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: Scalars['data_String_NotNull_pattern_ping'];
@@ -512,7 +484,7 @@ export type ResolversParentTypes = {
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher'];
   password_String_NotNull_maxLength_30: Scalars['password_String_NotNull_maxLength_30'];
   User: User;
-  SendVerifyCodeInput: SendVerifyCodeInput;
+  JWT: Scalars['JWT'];
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: Scalars['BigInt'];
   Byte: Scalars['Byte'];
@@ -725,20 +697,10 @@ export type StudentResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  checkVerifyCode?: Resolver<ResolversTypes['JWT'], ParentType, ContextType, RequireFields<MutationCheckVerifyCodeArgs, 'input'>>;
   createForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
   healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
   login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
-  sendVerifyCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendVerifyCodeArgs, 'input'>>;
 };
-
-export interface VerifyCode_String_NotNull_Pattern_096ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['verifyCode_String_NotNull_pattern_096'], any> {
-  name: 'verifyCode_String_NotNull_pattern_096';
-}
-
-export interface JwtScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JWT'], any> {
-  name: 'JWT';
-}
 
 export interface Data_String_NotNull_Pattern_PingScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['data_String_NotNull_pattern_ping'], any> {
   name: 'data_String_NotNull_pattern_ping';
@@ -757,6 +719,10 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   token?: Resolver<ResolversTypes['JWT'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface JwtScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JWT'], any> {
+  name: 'JWT';
+}
 
 export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['BigInt'], any> {
   name: 'BigInt';
@@ -981,12 +947,11 @@ export type Resolvers<ContextType = any> = {
   PageInfo?: PageInfoResolvers<ContextType>;
   Student?: StudentResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  verifyCode_String_NotNull_pattern_096?: GraphQLScalarType;
-  JWT?: GraphQLScalarType;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher?: GraphQLScalarType;
   password_String_NotNull_maxLength_30?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
+  JWT?: GraphQLScalarType;
   BigInt?: GraphQLScalarType;
   Byte?: GraphQLScalarType;
   Currency?: GraphQLScalarType;
