@@ -26,12 +26,9 @@ export const sendVerifyCode = async (parent: void, args: MutationSendVerifyCodeA
 	const random = getRandomNumber(100000, 999999)
 	const { phoneNumber } = args.input
 	const message = `[선린인터넷고등학교 정보보호과] 동아리 지원 본인확인 인증번호 : ${random} 를 화면에 입력해주세요`
-	const res = await sendSMS(phoneNumber, message)
-	if (res.statusName === "success") {
-		await context.redis.setex(`verifyCode:${phoneNumber}`, 300, `${random}`)
-		return true
-	}
-	throw new ApolloError("인증번호를 전송하는데 실패하였습니다")
+	const res = await sendSMS([phoneNumber], message)
+	await context.redis.setex(`verifyCode:${phoneNumber}`, 300, `${random}`)
+	return res.statusName === "success"
 }
 
 export const checkVerifyCode = async (parent: void, args: MutationCheckVerifyCodeArgs, context: Context) => {
@@ -42,7 +39,9 @@ export const checkVerifyCode = async (parent: void, args: MutationCheckVerifyCod
 	}
 	if (redisRes === verifyCode) {
 		await context.redis.del(`verifyCode:${phoneNumber}`)
-		return jwt.sign({ phoneNumber: phoneNumber }, env.JWT_SECRET)
+		return jwt.sign({ phoneNumber: phoneNumber }, env.JWT_SECRET, {
+			expiresIn: "1h",
+		})
 	}
 	throw new ApolloError("인증번호가 유효하지 않습니다")
 }

@@ -4688,10 +4688,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-ncp-sdk@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/ncp-sdk/-/ncp-sdk-1.0.3.tgz#4157b4300669c70fde460479b45b2cf0bc943f18"
-  integrity sha512-CI79NANnUL93rNLrD3KnA8a9cGDHz3iDS0Q43yu8DepPsehcfNM2kg0eo4MVOe0P0iFjdsMz9OKCgUbqMuv6kQ==
+ncp-sdk@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/ncp-sdk/-/ncp-sdk-1.0.4.tgz#91cc738656459a721b8b3bdaf51e4289709ef834"
+  integrity sha512-xTnNKaFoRuqAAjwfZ6BarEDXOXTB+BJ0hJict/5opkwZshVyk6TjkDHJb3rs+hPBO62pKXRQaj4tTOSnNIQi4A==
   dependencies:
     axios "^0.24.0"
     crypto-js "^4.1.1"

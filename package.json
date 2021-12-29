@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "export NODE_ENV=test; yarn lint && NODE_PATH=src/ mocha --require ts-node/register --timeout 100000 src/**/test.ts --exit --files",
+    "test:latest": "export NODE_ENV=test; yarn lint && NODE_PATH=src/ mocha --require ts-node/register --timeout 100000 src/**/auth/test.ts --exit --files",
     "coverage": "nyc --reporter=html --reporter=text --reporter=lcov yarn test",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov -t ${CODECOV_TOKEN}",
     "lint": "eslint **/*.ts",
@@ -50,7 +51,7 @@
     "jsonwebtoken": "^8.5.1",
     "mime-types": "^2.1.30",
     "mongodb": "^3.6.3",
-    "ncp-sdk": "^1.0.3",
+    "ncp-sdk": "^1.0.4",
     "redis": "^3.1.2"
   },
   "resolutions": {
