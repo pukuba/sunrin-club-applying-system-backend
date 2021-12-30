@@ -336,7 +336,7 @@ describe("Form Service", () => {
 		const db = (await mongoDB.get()) as Db
 		await Promise.all([
 			db.collection("form").deleteMany({ _id: { $in: formIds.map(id => new ObjectID(id)) } }),
-			db.collection("user").deleteMany({ _id: { $in: deletedUserIds } }),
+			db.collection("user").deleteMany({ id: { $in: deletedUserIds } }),
 		])
 	})
 })

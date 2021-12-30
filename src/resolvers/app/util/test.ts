@@ -103,7 +103,7 @@ describe("Util Service", () => {
 					.set("Authorization", `Bearer ${token.teacher}`)
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "최대 100개의 번호만 입력 가능합니다")
+				deepEqual(body.errors[0].message, "전송할 수 있는 최대 개수는 80개 입니다")
 			})
 
 			it("Failed request (too many requests) / Should be return errors", async () => {
@@ -118,13 +118,13 @@ describe("Util Service", () => {
 					.set("Authorization", `Bearer ${token.teacher}`)
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "전송 횟수 제한")
+				deepEqual(body.errors[0].message, "전송은 600초당 최대 3번 가능합니다")
 			})
 		})
 	})
 
 	after(async () => {
 		const db = (await mongoDB.get()) as Db
-		await db.collection("user").deleteMany({ _id: { $in: deletedUserIds } })
+		await db.collection("user").deleteMany({ id: { $in: deletedUserIds } })
 	})
 })

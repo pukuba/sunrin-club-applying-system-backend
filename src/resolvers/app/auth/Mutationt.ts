@@ -2,7 +2,6 @@ import { Context } from "config"
 import { env } from "config/env"
 import { ApolloError } from "apollo-server-express"
 import jwt from "jsonwebtoken"
-import { sendSMS } from "lib"
 import { MutationLoginArgs } from "config/models"
 
 export const login = async (parent: void, args: MutationLoginArgs, context: Context) => {
@@ -10,10 +9,9 @@ export const login = async (parent: void, args: MutationLoginArgs, context: Cont
 	const user = await context.db.collection("user").findOne({ id, password })
 	if (user === null) {
 		throw new ApolloError("아이디 혹은 비밀번호가 잘못되었습니다", undefined, {
-			ip: context.ip,
 			action: "로그인",
 			message: `아이디 혹은 비밀번호 오류 (아이디 : ${id})`,
-			role: "unknown",
+			club: args.input.id,
 		})
 	}
 	const token = jwt.sign({ role: user.role, id: id }, env.JWT_SECRET)

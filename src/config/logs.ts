@@ -38,8 +38,9 @@ const getExtensions = (response: any): any => {
 	}
 
 	for (const key in response) {
-		if (key === "extensions") {
+		if (key === "extensions" && response[key].message) {
 			const date = new Date(Date.now() + 1000 * 60 * 60 * 9).toISOString()
+			delete response[key]?.code
 			return {
 				extensions: {
 					...response[key],
@@ -63,7 +64,7 @@ export const ApolloLogPlugin = (): ApolloServerPlugin => {
 						willResolveField(fieldResolve) {
 							return async (err, result) => {
 								const obj = getExtensions(result)
-								if (obj?.extensions) {
+								if (obj?.extensions && obj.extensions.message) {
 									const db = (await mongoDB.get()) as Db
 									await db.collection("history").insertOne({
 										...obj.extensions,
