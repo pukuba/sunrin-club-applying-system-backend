@@ -351,6 +351,59 @@ describe("Form Service", () => {
 		})
 	})
 
+	describe("Query getLiveFormStatus", () => {
+		before(async () => {
+			const db = (await mongoDB.get()) as Db
+			const defaultObj = {
+				name: "남승원",
+				answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3 ㅇㅅㅇ!"],
+				phoneNumber: "01000000000",
+				portfolioURL: "https://github.com/pukuba/",
+				otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
+			}
+			const inputData = [
+				{ ...defaultObj, studentId: 10216, club: "emotion" },
+				{ ...defaultObj, studentId: 10212, club: "layer7" },
+				{ ...defaultObj, studentId: 10201, club: "unifox" },
+				{ ...defaultObj, studentId: 10101, club: "unifox" },
+				{ ...defaultObj, studentId: 10105, club: "unifox" },
+			]
+			const { insertedIds } = await db.collection("form").insertMany(inputData)
+			for (const key in insertedIds) {
+				formIds.push(insertedIds[key])
+			}
+		})
+		const query = `
+			query {
+				getLiveFormStatus{
+					club
+					formCount
+				}
+			}
+		`
+		describe("Success", () => {
+			it("Successful request / Should be return Array<FormStatus>", async () => {
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.send(JSON.stringify({ query }))
+					.expect(200)
+				deepEqual(body.data.getLiveFormStatus[0], {
+					club: "unifox",
+					formCount: 3,
+				})
+				deepEqual(body.data.getLiveFormStatus[1], {
+					club: "emotion",
+					formCount: 2,
+				})
+				deepEqual(body.data.getLiveFormStatus[2], {
+					club: "layer7",
+					formCount: 1,
+				})
+			})
+		})
+	})
+
 	after(async () => {
 		const db = (await mongoDB.get()) as Db
 		await Promise.all([
