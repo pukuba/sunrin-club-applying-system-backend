@@ -3,7 +3,7 @@ import request from "supertest"
 import { Form, FormConnection } from "config/models"
 import appPromise from "app"
 import { Server } from "http"
-import { mongoDB } from "config"
+import { mongoDB, redis } from "config"
 import { env } from "config/env"
 import { Db, ObjectID } from "mongodb"
 import jwt from "jsonwebtoken"
@@ -149,6 +149,25 @@ describe("Form Service", () => {
 					body.errors[0].message,
 					'Variable "$input" got invalid value "emo" at "input.club"; Expected type Club. 동아리 이름은 nefus, layer7, unifox, teamlog, emotion 중 하나입니다'
 				)
+			})
+
+			it("Failed request (too many requests) / Should be return errors", async () => {
+				const input = {
+					studentId: 10217,
+					name: "남승원",
+					club: "emotion",
+					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3"],
+					phoneNumber: "01000000000",
+					portfolioURL: "https://www.naver.com/",
+					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
+				}
+				await redis.setex("canSubmit:::ffff:127.0.0.1", 60, "10")
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				deepEqual(body.errors[0].message.startsWith("너무 많이 요청했습니다."), true)
 			})
 		})
 	})
