@@ -16,7 +16,7 @@ type Student implements StudentInfo {
 type Form implements StudentInfo {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
-    club: String!
+    club: Club!
     answerList: [String]!
     portfolioURL: URL
     otherURLs: [URL]!
@@ -62,7 +62,15 @@ extend type Query {
     # 동아리로 동아리 지원자 리스트 가져오기
     getStudentByClub(
         club: Club!
-    ): [Student!]!
+    ): [Student!]! 
+
+    # 동아리 지원 현황 가져오기
+    getLiveFormStatus: [FormStatus!]!
+}
+
+type FormStatus {
+    club: Club!
+    formCount: UnsignedInt!
 }
 
 type FormEdge {

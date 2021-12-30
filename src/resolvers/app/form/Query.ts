@@ -85,3 +85,22 @@ export const getStudentByClub = async (parent: void, args: QueryGetStudentByClub
 		}
 	})
 }
+
+export const getLiveFormStatus = async (parent: void, args: void, context: Context) => {
+	const data = await context.db
+		.collection("form")
+		.aggregate([
+			{ $group: { _id: "$club", studentId: { $addToSet: "$studentId" } } },
+			{
+				$project: {
+					club: 1,
+					formCount: { $cond: { if: { $isArray: "$studentId" }, then: { $size: "$studentId" }, else: "NA" } },
+				},
+			},
+			{ $sort: { formCount: -1 } },
+		])
+		.toArray()
+	return data.map(x => {
+		return { club: x._id, formCount: x.formCount }
+	})
+}
