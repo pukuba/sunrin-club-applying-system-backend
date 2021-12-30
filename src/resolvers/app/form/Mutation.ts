@@ -11,5 +11,13 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 		date: new Date(Date.now() + 1000 * 60 * 60 * 9).toISOString(),
 	}
 	const { insertedId: formId } = await context.db.collection("form").insertOne(document)
-	return { ...document, formId }
+	return {
+		...document,
+		formId,
+		extensions: {
+			message: `학번 ${args.input.studentId} 학생 ${args.input.club}동아리 지원서 제출`,
+			action: "동아리 지원서 제출",
+			club: args.input.club,
+		},
+	}
 }
