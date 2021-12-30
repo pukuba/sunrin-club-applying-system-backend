@@ -3,8 +3,8 @@ import request from "supertest"
 import { User } from "config/models"
 import appPromise from "app"
 import { Server } from "http"
-import { mongoDB, redis } from "config"
-import { Db, ObjectID } from "mongodb"
+import { mongoDB } from "config"
+import { Db } from "mongodb"
 
 describe("Auth Service", () => {
 	let app: Server

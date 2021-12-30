@@ -1,11 +1,10 @@
 import { deepStrictEqual as deepEqual } from "assert"
 import request from "supertest"
-import { Form, FormConnection, Student } from "config/models"
 import appPromise from "app"
 import { Server } from "http"
 import { mongoDB, redis } from "config"
 import { env } from "config/env"
-import { Db, ObjectID } from "mongodb"
+import { Db } from "mongodb"
 import jwt from "jsonwebtoken"
 
 describe("Util Service", () => {
@@ -14,7 +13,6 @@ describe("Util Service", () => {
 		teacher: string
 		invalid: string
 	}
-	const formIds: string[] = []
 	const deletedUserIds: string[] = []
 	before(async () => {
 		app = await appPromise
@@ -86,7 +84,7 @@ describe("Util Service", () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
-					.set("Authorization", `Bearer sunrin`)
+					.set("Authorization", "Bearer sunrin")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
 				deepEqual(body.errors[0].message, "Not Authorised!")
@@ -107,7 +105,7 @@ describe("Util Service", () => {
 			})
 
 			it("Failed request (too many requests) / Should be return errors", async () => {
-				await redis.setex(`sms:teacher`, 10, "3")
+				await redis.setex("sms:teacher", 10, "3")
 				const input = {
 					message: "실패해야하는 메세지",
 					phoneNumberList: [env.MY_PHONE],

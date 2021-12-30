@@ -4,7 +4,7 @@ import { ApolloError } from "apollo-server-express"
 import { MutationCreateFormArgs, MutationSendMessageArgs } from "config/models"
 import { validEmotion } from "./validForm"
 
-export const isValidForm = rule()(async (parent: void, args: MutationCreateFormArgs, context: Context) => {
+export const isValidForm = rule()(async (parent: void, args: MutationCreateFormArgs) => {
 	if (args.input.club === "emotion") return validEmotion(args.input.answerList)
 	else return true
 })

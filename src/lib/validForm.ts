@@ -1,6 +1,6 @@
-import { ApolloError, UserInputError } from "apollo-server-express"
+import { ApolloError } from "apollo-server-express"
 
-const createError = (message: string) => new UserInputError(message)
+const createError = (message: string) => new ApolloError(message)
 
 export const validEmotion = (answerList: string[]) => {
 	const limits = [300, 500, 1000]

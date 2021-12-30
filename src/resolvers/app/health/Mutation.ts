@@ -1,5 +1,3 @@
-import { MutationHealthCheckArgs } from "config/models"
-
-export const healthCheck = (parent: void, args: MutationHealthCheckArgs) => {
+export const healthCheck = () => {
 	return "pong"
 }
