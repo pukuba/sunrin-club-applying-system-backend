@@ -174,7 +174,7 @@ describe("Form Service", () => {
 
 	describe("Query getFormByClub", () => {
 		const query = `
-			query ($club: Club!, $cursor: ObjectID, $offset: Int! = 10) {
+			query ($club: Club!, $cursor: ObjectID, $offset: UnsignedInt! = 10) {
 				getFormByClub(club: $club, cursor: $cursor, offset: $offset) {
 					edges {
 						cursor
@@ -260,7 +260,7 @@ describe("Form Service", () => {
 
 	describe("Query getFormByStudentId", async () => {
 		const query = `
-			query ($studentId: StudentID!, $cursor: ObjectID, $offset: Int! = 10) {
+			query ($studentId: StudentID!, $cursor: ObjectID, $offset: UnsignedInt! = 10) {
 				getFormByStudentId(studentId: $studentId, cursor: $cursor, offset: $offset) {
 					edges {
 						cursor

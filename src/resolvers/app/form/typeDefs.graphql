@@ -48,14 +48,14 @@ extend type Query {
     # 동아리 별로 신청서를 가져옵니다
     getFormByClub(
         club: Club!
-        offset: Int! = 10
+        offset: UnsignedInt! = 10
         cursor: ObjectID
     ): FormConnection!
 
     # 학번으로 신청서를 가져옵니다
     getFormByStudentId(
         studentId: StudentID!
-        offset: Int! = 10
+        offset: UnsignedInt! = 10
         cursor: ObjectID
     ): FormConnection!
 
@@ -79,7 +79,7 @@ type FormEdge {
 }
 
 type FormConnection {
-    totalCount: Int!
+    totalCount: UnsignedInt!
     edges: [FormEdge!]!
     pageInfo: PageInfo!
 }
