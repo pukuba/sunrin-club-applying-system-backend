@@ -94,7 +94,7 @@ describe("Auth Service", () => {
 					.expect(200)
 				const data = body.data.getLogByKeyword as LogConnection
 				deepEqual(data.__typename, "LogConnection")
-				deepEqual(data.totalCount, 4)
+				deepEqual(data.totalCount, 3)
 				deepEqual(data.edges[0], {
 					action: "지원서 제출",
 					message: "요청 횟수 초과 (학번 : 10217)",
