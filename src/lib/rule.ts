@@ -5,8 +5,7 @@ import { MutationCreateFormArgs, MutationSendMessageArgs } from "config/models"
 import { validEmotion } from "./validForm"
 
 export const isValidForm = rule()(async (parent: void, args: MutationCreateFormArgs) => {
-	if (args.input.club === "emotion") return validEmotion(args.input.answerList)
-	else return true
+	return validEmotion(args.input.answerList, args.input.club)
 })
 
 export const canSMS = rule()(async (parent: void, args: MutationSendMessageArgs, context: RequiredContext) => {
@@ -68,8 +67,7 @@ export const isValidUser = rule()(async (parent: void, args: void, context: Cont
 	const id = context.user?.id
 	const role = context.user?.role
 	if (role) {
-		const ret = (await context.db.collection("user").findOne({ id: id })) !== null
-		return ret
+		return (await context.db.collection("user").findOne({ id: id })) !== null
 	}
 	return false
 })

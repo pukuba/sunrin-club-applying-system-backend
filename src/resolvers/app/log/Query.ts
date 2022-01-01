@@ -1,22 +1,26 @@
 import { RequiredContext } from "config"
-import { QueryGetLogByKeywordArgs } from "config/models"
+import { QueryGetLogByKeywordArgs, RequireFields } from "config/models"
 import { MongoQuery, QueryOptions } from "./models"
 
-export const getLogByKeyword = async (parent: void, args: QueryGetLogByKeywordArgs, context: RequiredContext) => {
+export const getLogByKeyword = async (
+	parent: void,
+	args: RequireFields<QueryGetLogByKeywordArgs, "keyword">,
+	context: RequiredContext
+) => {
 	const { keyword, limit, page } = args
-	let options: QueryOptions = {}
+	const options: QueryOptions = {}
 	const club = context.user.role
 	if (club !== "teacher") {
 		options["club"] = club
 	}
-	if (keyword) {
+	if (keyword.length > 0) {
 		options["message"] = new RegExp(keyword)
 	}
 	const query: MongoQuery = [
 		{ $match: options },
 		{ $sort: { _id: -1 } },
 		{ $skip: (page - 1) * limit },
-		{ $limit: limit as number },
+		{ $limit: limit },
 	]
 	const [data, count] = await Promise.all([
 		context.db.collection("log").aggregate(query).toArray(),
@@ -27,7 +31,7 @@ export const getLogByKeyword = async (parent: void, args: QueryGetLogByKeywordAr
 		edges: data,
 		pageInfo: {
 			nowPage: args.page,
-			totalPage: Math.max(Math.ceil(count / limit), 1),
+			maxPage: Math.max(Math.ceil(count / limit), 1),
 		},
 	}
 }

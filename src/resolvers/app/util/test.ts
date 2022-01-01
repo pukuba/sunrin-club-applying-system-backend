@@ -124,5 +124,6 @@ describe("Util Service", () => {
 	after(async () => {
 		const db = (await mongoDB.get()) as Db
 		await db.collection("user").deleteMany({ id: { $in: deletedUserIds } })
+		await db.collection("log").deleteMany({})
 	})
 })

@@ -178,7 +178,7 @@ export type Query = {
   getFormByClub: FormConnection;
   getFormByStudentId: FormConnection;
   getLiveFormStatus: Array<FormStatus>;
-  getLogByKeyword: Array<Log>;
+  getLogByKeyword: LogConnection;
   getStudentByClub: Array<Student>;
   healthLive: Scalars['DateTime'];
 };
@@ -200,7 +200,7 @@ export type QueryGetFormByStudentIdArgs = {
 
 export type QueryGetLogByKeywordArgs = {
   keyword?: InputMaybe<Scalars['String']>;
-  limit?: Scalars['UnsignedInt'];
+  limit?: InputMaybe<Scalars['UnsignedInt']>;
   page: Scalars['UnsignedInt'];
 };
 
@@ -254,14 +254,28 @@ export type FormStatus = {
   formCount: Scalars['UnsignedInt'];
 };
 
+export type LogConnection = {
+  __typename?: 'LogConnection';
+  edges: Array<Log>;
+  pageInfo: OffsetPageInfo;
+  totalCount: Scalars['UnsignedInt'];
+};
+
 export type Log = {
   __typename?: 'Log';
   action: Scalars['String'];
+  club?: Maybe<Scalars['Club']>;
   ip: Scalars['IP'];
   logId: Scalars['ObjectID'];
   message: Scalars['String'];
   role: Scalars['String'];
   status: Scalars['Boolean'];
+};
+
+export type OffsetPageInfo = {
+  __typename?: 'OffsetPageInfo';
+  maxPage: Scalars['UnsignedInt'];
+  nowPage: Scalars['UnsignedInt'];
 };
 
 export type Student = StudentInfo & {
@@ -344,12 +358,6 @@ export type File = {
   encoding: Scalars['String'];
   filename: Scalars['String'];
   mimetype: Scalars['String'];
-};
-
-export type OffsetPageInfo = {
-  __typename?: 'OffsetPageInfo';
-  maxPage: Scalars['UnsignedInt'];
-  nowPage: Scalars['UnsignedInt'];
 };
 
 
@@ -438,8 +446,10 @@ export type ResolversTypes = {
   CursorPageInfo: ResolverTypeWrapper<CursorPageInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   FormStatus: ResolverTypeWrapper<FormStatus>;
+  LogConnection: ResolverTypeWrapper<LogConnection>;
   Log: ResolverTypeWrapper<Log>;
   IP: ResolverTypeWrapper<Scalars['IP']>;
+  OffsetPageInfo: ResolverTypeWrapper<OffsetPageInfo>;
   Student: ResolverTypeWrapper<Student>;
   Mutation: ResolverTypeWrapper<{}>;
   CreateFormInput: CreateFormInput;
@@ -489,7 +499,6 @@ export type ResolversTypes = {
   NonNegativeInt: ResolverTypeWrapper<Scalars['NonNegativeInt']>;
   NonPositiveFloat: ResolverTypeWrapper<Scalars['NonPositiveFloat']>;
   NonPositiveInt: ResolverTypeWrapper<Scalars['NonPositiveInt']>;
-  OffsetPageInfo: ResolverTypeWrapper<OffsetPageInfo>;
   PhoneNumber: ResolverTypeWrapper<Scalars['PhoneNumber']>;
   Port: ResolverTypeWrapper<Scalars['Port']>;
   PositiveFloat: ResolverTypeWrapper<Scalars['PositiveFloat']>;
@@ -529,8 +538,10 @@ export type ResolversParentTypes = {
   CursorPageInfo: CursorPageInfo;
   Boolean: Scalars['Boolean'];
   FormStatus: FormStatus;
+  LogConnection: LogConnection;
   Log: Log;
   IP: Scalars['IP'];
+  OffsetPageInfo: OffsetPageInfo;
   Student: Student;
   Mutation: {};
   CreateFormInput: CreateFormInput;
@@ -579,7 +590,6 @@ export type ResolversParentTypes = {
   NonNegativeInt: Scalars['NonNegativeInt'];
   NonPositiveFloat: Scalars['NonPositiveFloat'];
   NonPositiveInt: Scalars['NonPositiveInt'];
-  OffsetPageInfo: OffsetPageInfo;
   PhoneNumber: Scalars['PhoneNumber'];
   Port: Scalars['Port'];
   PositiveFloat: Scalars['PositiveFloat'];
@@ -678,7 +688,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getFormByClub?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club' | 'limit'>>;
   getFormByStudentId?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByStudentIdArgs, 'limit' | 'studentId'>>;
   getLiveFormStatus?: Resolver<Array<ResolversTypes['FormStatus']>, ParentType, ContextType>;
-  getLogByKeyword?: Resolver<Array<ResolversTypes['Log']>, ParentType, ContextType, RequireFields<QueryGetLogByKeywordArgs, 'limit' | 'page'>>;
+  getLogByKeyword?: Resolver<ResolversTypes['LogConnection'], ParentType, ContextType, RequireFields<QueryGetLogByKeywordArgs, 'keyword' | 'limit' | 'page'>>;
   getStudentByClub?: Resolver<Array<ResolversTypes['Student']>, ParentType, ContextType, RequireFields<QueryGetStudentByClubArgs, 'club'>>;
   healthLive?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
@@ -761,8 +771,16 @@ export type FormStatusResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LogConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['LogConnection'] = ResolversParentTypes['LogConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['Log']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['OffsetPageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type LogResolvers<ContextType = any, ParentType extends ResolversParentTypes['Log'] = ResolversParentTypes['Log']> = {
   action?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  club?: Resolver<Maybe<ResolversTypes['Club']>, ParentType, ContextType>;
   ip?: Resolver<ResolversTypes['IP'], ParentType, ContextType>;
   logId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -774,6 +792,12 @@ export type LogResolvers<ContextType = any, ParentType extends ResolversParentTy
 export interface IpScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['IP'], any> {
   name: 'IP';
 }
+
+export type OffsetPageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['OffsetPageInfo'] = ResolversParentTypes['OffsetPageInfo']> = {
+  maxPage?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
+  nowPage?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type StudentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Student'] = ResolversParentTypes['Student']> = {
   name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
@@ -958,12 +982,6 @@ export interface NonPositiveIntScalarConfig extends GraphQLScalarTypeConfig<Reso
   name: 'NonPositiveInt';
 }
 
-export type OffsetPageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['OffsetPageInfo'] = ResolversParentTypes['OffsetPageInfo']> = {
-  maxPage?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
-  nowPage?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export interface PhoneNumberScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['PhoneNumber'], any> {
   name: 'PhoneNumber';
 }
@@ -1044,8 +1062,10 @@ export type Resolvers<ContextType = any> = {
   URL?: GraphQLScalarType;
   CursorPageInfo?: CursorPageInfoResolvers<ContextType>;
   FormStatus?: FormStatusResolvers<ContextType>;
+  LogConnection?: LogConnectionResolvers<ContextType>;
   Log?: LogResolvers<ContextType>;
   IP?: GraphQLScalarType;
+  OffsetPageInfo?: OffsetPageInfoResolvers<ContextType>;
   Student?: StudentResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;
@@ -1089,7 +1109,6 @@ export type Resolvers<ContextType = any> = {
   NonNegativeInt?: GraphQLScalarType;
   NonPositiveFloat?: GraphQLScalarType;
   NonPositiveInt?: GraphQLScalarType;
-  OffsetPageInfo?: OffsetPageInfoResolvers<ContextType>;
   PhoneNumber?: GraphQLScalarType;
   Port?: GraphQLScalarType;
   PositiveFloat?: GraphQLScalarType;

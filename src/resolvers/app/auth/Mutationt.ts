@@ -11,7 +11,6 @@ export const login = async (parent: void, args: MutationLoginArgs, context: Cont
 		throw new ApolloError("아이디 혹은 비밀번호가 잘못되었습니다", undefined, {
 			action: "로그인",
 			message: `아이디 혹은 비밀번호 오류 (아이디 : ${id})`,
-			club: args.input.id,
 		})
 	}
 	const token = jwt.sign({ role: user.role, id: id }, env.JWT_SECRET)
