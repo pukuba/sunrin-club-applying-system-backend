@@ -5,7 +5,7 @@ type File {
     mimetype: String!
     encoding: String!
 }
-
+    
 type Mutation
 
 type Query
@@ -21,8 +21,13 @@ directive @cacheControl(
     inheritMaxAge: Boolean
 ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
 
-type PageInfo {
+type CursorPageInfo {
     hasNextPage: Boolean!
     startCursor: ObjectID
     endCursor: ObjectID
+}
+
+type OffsetPageInfo {
+    nowPage: UnsignedInt!
+    maxPage: UnsignedInt!
 }

@@ -15,14 +15,14 @@ export interface Context {
 	ip: string
 	user: {
 		id?: string
-		role?: "teamlog" | "teacher" | "emotion" | "layer7" | "nefus" | "unifox"
+		role?: ClubType | "teacher"
 	} | null
 }
 
 export interface RequiredContext extends Context {
 	user: {
 		id: string
-		role: "teamlog" | "teacher" | "emotion" | "layer7" | "nefus" | "unifox"
+		role: ClubType | "teacher"
 	}
 }
 
@@ -32,3 +32,5 @@ export interface PaginationInput {
 	offset: number
 	cursor: string | null
 }
+
+export type ClubType = "teamlog" | "emotion" | "layer7" | "nefus" | "unifox"

@@ -3,7 +3,7 @@ import { MongoQuery } from "./models"
 import { QueryGetFormByClubArgs, QueryGetFormByStudentIdArgs, QueryGetStudentByClubArgs } from "config/models"
 
 export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, context: Context) => {
-	const { offset, cursor, club } = args
+	const { limit, cursor, club } = args
 	const { db } = context
 	const query: MongoQuery = [
 		{
@@ -12,7 +12,7 @@ export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, 
 			},
 		},
 		{ $sort: { _id: -1 } },
-		{ $limit: offset as number },
+		{ $limit: limit as number },
 	]
 
 	if (cursor) {
@@ -26,7 +26,7 @@ export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, 
 		totalCount: count,
 		edges: data.map(x => ({ node: x, cursor: x._id.toString() })),
 		pageInfo: {
-			hasNextPage: data.length === offset,
+			hasNextPage: data.length === limit,
 			startCursor: cursor,
 			endCursor: data[data.length - 1]?._id.toString() ?? null,
 		},
@@ -34,7 +34,7 @@ export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, 
 }
 
 export const getFormByStudentId = async (parent: void, args: QueryGetFormByStudentIdArgs, context: RequiredContext) => {
-	const { offset, cursor, studentId } = args
+	const { limit, cursor, studentId } = args
 	const club = context.user.role
 	let options = {}
 	if (club !== "teacher") {
@@ -48,7 +48,7 @@ export const getFormByStudentId = async (parent: void, args: QueryGetFormByStude
 			},
 		},
 		{ $sort: { _id: -1 } },
-		{ $limit: offset as number },
+		{ $limit: limit as number },
 	]
 	if (cursor) {
 		query[0].$match["_id"] = { $gt: new ObjectID(cursor) }
@@ -61,7 +61,7 @@ export const getFormByStudentId = async (parent: void, args: QueryGetFormByStude
 		totalCount: count,
 		edges: data.map(x => ({ node: x, cursor: x._id.toString() })),
 		pageInfo: {
-			hasNextPage: data.length === offset,
+			hasNextPage: data.length === limit,
 			startCursor: cursor,
 			endCursor: data[data.length - 1]?._id.toString() ?? null,
 		},
