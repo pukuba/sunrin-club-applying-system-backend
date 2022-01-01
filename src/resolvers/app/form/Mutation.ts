@@ -15,7 +15,7 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 		...document,
 		formId,
 		extensions: {
-			message: `학번 ${args.input.studentId} 학생 ${args.input.club}동아리 지원서 제출`,
+			message: `${args.input.club} 동아리 지원서 제출 (학번 : ${args.input.studentId})`,
 			action: "동아리 지원서 제출",
 			club: args.input.club,
 		},
