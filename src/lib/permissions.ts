@@ -11,6 +11,7 @@ export const permissions = shield(
 			getFormByClub: isValidGetFormByClub,
 			getFormByStudentId: isValidUser,
 			getStudentByClub: isValidGetFormByClub,
+			getLogByKeyword: isValidUser,
 		},
 	},
 	{ allowExternalErrors: true }

@@ -174,8 +174,8 @@ describe("Form Service", () => {
 
 	describe("Query getFormByClub", () => {
 		const query = `
-			query ($club: Club!, $cursor: ObjectID, $offset: UnsignedInt! = 10) {
-				getFormByClub(club: $club, cursor: $cursor, offset: $offset) {
+			query ($club: Club!, $cursor: ObjectID, $limit: UnsignedInt! = 10) {
+				getFormByClub(club: $club, cursor: $cursor, limit: $limit) {
 					edges {
 						cursor
 						node {
@@ -205,7 +205,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.emotion}`)
-					.send(JSON.stringify({ query, variables: { club: "emotion", offset: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "emotion", limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
 				deepEqual(totalCount, 2)
@@ -220,7 +220,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
-					.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[0], offset: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[0], limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
 				deepEqual(totalCount, 2)
@@ -235,7 +235,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
-					.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[1], offset: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[1], limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
 				deepEqual(totalCount, 2)
@@ -251,7 +251,7 @@ describe("Form Service", () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
-					.send(JSON.stringify({ query, variables: { club: "emotion", offset: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "emotion", limit: 1 } }))
 					.expect(200)
 				deepEqual(body.errors[0].message, "Not Authorised!")
 			})
@@ -260,8 +260,8 @@ describe("Form Service", () => {
 
 	describe("Query getFormByStudentId", async () => {
 		const query = `
-			query ($studentId: StudentID!, $cursor: ObjectID, $offset: UnsignedInt! = 10) {
-				getFormByStudentId(studentId: $studentId, cursor: $cursor, offset: $offset) {
+			query ($studentId: StudentID!, $cursor: ObjectID, $limit: UnsignedInt! = 10) {
+				getFormByStudentId(studentId: $studentId, cursor: $cursor, limit: $limit) {
 					edges {
 						cursor
 						node {
@@ -291,7 +291,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
-					.send(JSON.stringify({ query, variables: { studentId: 10217, offset: 1 } }))
+					.send(JSON.stringify({ query, variables: { studentId: 10217, limit: 1 } }))
 				const { edges, pageInfo, totalCount } = body.data.getFormByStudentId as FormConnection
 				deepEqual(totalCount, 2)
 				deepEqual(pageInfo.hasNextPage, true)
@@ -305,7 +305,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.emotion}`)
-					.send(JSON.stringify({ query, variables: { studentId: 10217, cursor: formIds[1], offset: 1 } }))
+					.send(JSON.stringify({ query, variables: { studentId: 10217, cursor: formIds[1], limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getFormByStudentId as FormConnection
 				deepEqual(totalCount, 2)
@@ -321,7 +321,7 @@ describe("Form Service", () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
-					.send(JSON.stringify({ query, variables: { studentId: 10217, offset: 1 } }))
+					.send(JSON.stringify({ query, variables: { studentId: 10217, limit: 1 } }))
 					.expect(200)
 				deepEqual(body.errors[0].message, "Not Authorised!")
 			})

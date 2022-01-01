@@ -1,0 +1,25 @@
+scalar IP
+
+extend type Query {
+    # 로그를 가져옵니다
+    getLogByKeyword(
+        page: UnsignedInt!
+        limit: UnsignedInt! = 10
+        keyword: String
+    ): [Log!]!
+}
+
+type Log {
+    action: String!
+    message: String!
+    logId: ObjectID!
+    status: Boolean!
+    ip: IP!
+    role: String!
+}
+
+type LogConnection {
+    totalCount: UnsignedInt!
+    edges: [Log!]!
+    pageInfo: OffsetPageInfo!
+}

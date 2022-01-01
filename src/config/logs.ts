@@ -66,7 +66,7 @@ export const ApolloLogPlugin = (): ApolloServerPlugin => {
 								const obj = getExtensions(result)
 								if (obj?.extensions && obj.extensions.message) {
 									const db = (await mongoDB.get()) as Db
-									await db.collection("history").insertOne({
+									await db.collection("log").insertOne({
 										...obj.extensions,
 										ip: fieldResolve.context.ip,
 										role: fieldResolve.context.user?.role || "unknown",
