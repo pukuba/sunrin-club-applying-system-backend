@@ -84,7 +84,7 @@ describe("Auth Service", () => {
 				const variables = {
 					limit: 10,
 					page: 1,
-					message: "10217",
+					keyword: "10217",
 				}
 				const { body } = await request(app)
 					.post("/api")
