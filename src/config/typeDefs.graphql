@@ -31,3 +31,9 @@ type OffsetPageInfo {
     nowPage: UnsignedInt!
     maxPage: UnsignedInt!
 }
+
+interface Error {
+    message: String!
+    path: String!
+    suggestion: String!
+}
