@@ -16,7 +16,6 @@ type Log {
     status: Boolean!
     ip: IP!
     role: String!
-    logId: ObjectID!
 }
 
 type LogConnection {
