@@ -49,9 +49,6 @@ export default (async () => {
 		context: ({ req }) => {
 			const ip = req.headers["x-forwarded-for"] || req.headers["CF-Connecting-IP"] || req.socket.remoteAddress
 			const token = req.headers["authorization"]
-			if (!ip) {
-				throw new Error("No IP")
-			}
 			return { db, redis, ip, user: decodeToken(token) }
 		},
 		validationRules: [depthLimit(8)],

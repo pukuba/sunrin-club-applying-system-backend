@@ -89,7 +89,6 @@ describe("Form Service", () => {
 					club: "emotion",
 					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3", "자소서 문항4", "자소서 문항5"],
 					phoneNumber: "01000000000",
-					portfolioURL: "https://github.com/pukuba/",
 					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
 				}
 				const { body } = await request(app)
@@ -99,7 +98,7 @@ describe("Form Service", () => {
 					.expect(200)
 				const { formId, date, ...data } = body.data.createForm as Form
 				formIds.push(formId)
-				deepEqual(data, { ...input, __typename: "Form" })
+				deepEqual(data, { ...input, __typename: "Form", portfolioURL: null })
 				deepEqual(typeof date, "string")
 			})
 		})
