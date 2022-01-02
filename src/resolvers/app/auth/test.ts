@@ -1,6 +1,6 @@
 import { deepStrictEqual as deepEqual } from "assert"
 import request from "supertest"
-import { User } from "config/models"
+import { User, InvalidAccountError } from "config/models"
 import appPromise from "app"
 import { Server } from "http"
 import { mongoDB } from "config"
@@ -25,8 +25,16 @@ describe("Auth Service", () => {
 		const query = `
 				mutation ($input: LoginInput!) {
 					login(input: $input) {
-						role
-                        token
+						... on User {
+							role
+							token
+						}
+						... on InvalidAccountError {
+							message
+							path
+							suggestion
+						}
+						__typename
 					}
 				}
 			`
@@ -71,7 +79,13 @@ describe("Auth Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "아이디 혹은 비밀번호가 잘못되었습니다")
+				const data = body.data.login as InvalidAccountError
+				deepEqual(data, {
+					__typename: "InvalidAccountError",
+					message: "아이디 혹은 비밀번호가 잘못되었습니다",
+					path: "login",
+					suggestion: "계정을 다시 확인해주세요",
+				})
 			})
 		})
 	})

@@ -287,10 +287,10 @@ export type Student = StudentInfo & {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createForm: Form;
+  createForm: CreateFormResult;
   healthCheck: Scalars['String'];
-  login: User;
-  sendMessage: Scalars['Boolean'];
+  login: LoginResult;
+  sendMessage: SendMessageResult;
 };
 
 
@@ -323,6 +323,29 @@ export type CreateFormInput = {
   studentId: Scalars['StudentID'];
 };
 
+export type CreateFormResult = CreateFormInvalidInputError | Form | RateLimitError;
+
+export type CreateFormInvalidInputError = Error & {
+  __typename?: 'CreateFormInvalidInputError';
+  message: Scalars['String'];
+  path: Scalars['String'];
+  suggestion: Scalars['String'];
+};
+
+export type Error = {
+  message: Scalars['String'];
+  path: Scalars['String'];
+  suggestion: Scalars['String'];
+};
+
+export type RateLimitError = Error & {
+  __typename?: 'RateLimitError';
+  afterTry: Scalars['UnsignedInt'];
+  message: Scalars['String'];
+  path: Scalars['String'];
+  suggestion: Scalars['String'];
+};
+
 export type HealthCheckInput = {
   data: Scalars['data_String_NotNull_pattern_ping'];
 };
@@ -330,6 +353,15 @@ export type HealthCheckInput = {
 export type LoginInput = {
   id: Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher'];
   password: Scalars['password_String_NotNull_maxLength_30'];
+};
+
+export type LoginResult = InvalidAccountError | User;
+
+export type InvalidAccountError = Error & {
+  __typename?: 'InvalidAccountError';
+  message: Scalars['String'];
+  path: Scalars['String'];
+  suggestion: Scalars['String'];
 };
 
 export type User = {
@@ -341,6 +373,21 @@ export type User = {
 export type SendMessageInput = {
   message: Scalars['message_String_NotNull_maxLength_80'];
   phoneNumberList: Array<Scalars['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098']>;
+};
+
+export type SendMessageResult = SendMessageInvalidInputError | SendMessagePayload;
+
+export type SendMessageInvalidInputError = Error & {
+  __typename?: 'SendMessageInvalidInputError';
+  message: Scalars['String'];
+  path: Scalars['String'];
+  suggestion: Scalars['String'];
+};
+
+export type SendMessagePayload = {
+  __typename?: 'SendMessagePayload';
+  message: Scalars['String'];
+  status: Scalars['Boolean'];
 };
 
 export type AdditionalEntityFields = {
@@ -453,16 +500,25 @@ export type ResolversTypes = {
   Student: ResolverTypeWrapper<Student>;
   Mutation: ResolverTypeWrapper<{}>;
   CreateFormInput: CreateFormInput;
+  CreateFormResult: ResolversTypes['CreateFormInvalidInputError'] | ResolversTypes['Form'] | ResolversTypes['RateLimitError'];
+  CreateFormInvalidInputError: ResolverTypeWrapper<CreateFormInvalidInputError>;
+  Error: ResolversTypes['CreateFormInvalidInputError'] | ResolversTypes['RateLimitError'] | ResolversTypes['InvalidAccountError'] | ResolversTypes['SendMessageInvalidInputError'];
+  RateLimitError: ResolverTypeWrapper<RateLimitError>;
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: ResolverTypeWrapper<Scalars['data_String_NotNull_pattern_ping']>;
   LoginInput: LoginInput;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: ResolverTypeWrapper<Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher']>;
   password_String_NotNull_maxLength_30: ResolverTypeWrapper<Scalars['password_String_NotNull_maxLength_30']>;
+  LoginResult: ResolversTypes['InvalidAccountError'] | ResolversTypes['User'];
+  InvalidAccountError: ResolverTypeWrapper<InvalidAccountError>;
   User: ResolverTypeWrapper<User>;
   JWT: ResolverTypeWrapper<Scalars['JWT']>;
   SendMessageInput: SendMessageInput;
   message_String_NotNull_maxLength_80: ResolverTypeWrapper<Scalars['message_String_NotNull_maxLength_80']>;
   phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098: ResolverTypeWrapper<Scalars['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098']>;
+  SendMessageResult: ResolversTypes['SendMessageInvalidInputError'] | ResolversTypes['SendMessagePayload'];
+  SendMessageInvalidInputError: ResolverTypeWrapper<SendMessageInvalidInputError>;
+  SendMessagePayload: ResolverTypeWrapper<SendMessagePayload>;
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
   Byte: ResolverTypeWrapper<Scalars['Byte']>;
@@ -545,16 +601,25 @@ export type ResolversParentTypes = {
   Student: Student;
   Mutation: {};
   CreateFormInput: CreateFormInput;
+  CreateFormResult: ResolversParentTypes['CreateFormInvalidInputError'] | ResolversParentTypes['Form'] | ResolversParentTypes['RateLimitError'];
+  CreateFormInvalidInputError: CreateFormInvalidInputError;
+  Error: ResolversParentTypes['CreateFormInvalidInputError'] | ResolversParentTypes['RateLimitError'] | ResolversParentTypes['InvalidAccountError'] | ResolversParentTypes['SendMessageInvalidInputError'];
+  RateLimitError: RateLimitError;
   HealthCheckInput: HealthCheckInput;
   data_String_NotNull_pattern_ping: Scalars['data_String_NotNull_pattern_ping'];
   LoginInput: LoginInput;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher'];
   password_String_NotNull_maxLength_30: Scalars['password_String_NotNull_maxLength_30'];
+  LoginResult: ResolversParentTypes['InvalidAccountError'] | ResolversParentTypes['User'];
+  InvalidAccountError: InvalidAccountError;
   User: User;
   JWT: Scalars['JWT'];
   SendMessageInput: SendMessageInput;
   message_String_NotNull_maxLength_80: Scalars['message_String_NotNull_maxLength_80'];
   phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098: Scalars['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098'];
+  SendMessageResult: ResolversParentTypes['SendMessageInvalidInputError'] | ResolversParentTypes['SendMessagePayload'];
+  SendMessageInvalidInputError: SendMessageInvalidInputError;
+  SendMessagePayload: SendMessagePayload;
   AdditionalEntityFields: AdditionalEntityFields;
   BigInt: Scalars['BigInt'];
   Byte: Scalars['Byte'];
@@ -684,6 +749,14 @@ export type ConstraintDirectiveArgs = {
 
 export type ConstraintDirectiveResolver<Result, Parent, ContextType = any, Args = ConstraintDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
+export type RatelimitDirectiveArgs = {
+  key: Scalars['String'];
+  max: Scalars['UnsignedInt'];
+  ttl: Scalars['UnsignedInt'];
+};
+
+export type RatelimitDirectiveResolver<Result, Parent, ContextType = any, Args = RatelimitDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getFormByClub?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club' | 'limit'>>;
   getFormByStudentId?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByStudentIdArgs, 'limit' | 'studentId'>>;
@@ -807,10 +880,36 @@ export type StudentResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
+  createForm?: Resolver<ResolversTypes['CreateFormResult'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
   healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
-  login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
-  sendMessage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'input'>>;
+  login?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
+  sendMessage?: Resolver<ResolversTypes['SendMessageResult'], ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'input'>>;
+};
+
+export type CreateFormResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateFormResult'] = ResolversParentTypes['CreateFormResult']> = {
+  __resolveType: TypeResolveFn<'CreateFormInvalidInputError' | 'Form' | 'RateLimitError', ParentType, ContextType>;
+};
+
+export type CreateFormInvalidInputErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateFormInvalidInputError'] = ResolversParentTypes['CreateFormInvalidInputError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']> = {
+  __resolveType: TypeResolveFn<'CreateFormInvalidInputError' | 'RateLimitError' | 'InvalidAccountError' | 'SendMessageInvalidInputError', ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type RateLimitErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['RateLimitError'] = ResolversParentTypes['RateLimitError']> = {
+  afterTry?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface Data_String_NotNull_Pattern_PingScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['data_String_NotNull_pattern_ping'], any> {
@@ -824,6 +923,17 @@ export interface Id_String_NotNull_Pattern_Unifoxlayer7teamlognefusemotionteache
 export interface Password_String_NotNull_MaxLength_30ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['password_String_NotNull_maxLength_30'], any> {
   name: 'password_String_NotNull_maxLength_30';
 }
+
+export type LoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']> = {
+  __resolveType: TypeResolveFn<'InvalidAccountError' | 'User', ParentType, ContextType>;
+};
+
+export type InvalidAccountErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['InvalidAccountError'] = ResolversParentTypes['InvalidAccountError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -842,6 +952,23 @@ export interface Message_String_NotNull_MaxLength_80ScalarConfig extends GraphQL
 export interface PhoneNumberList_List_ListNotNull_String_NotNull_Pattern_010098ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098'], any> {
   name: 'phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098';
 }
+
+export type SendMessageResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['SendMessageResult'] = ResolversParentTypes['SendMessageResult']> = {
+  __resolveType: TypeResolveFn<'SendMessageInvalidInputError' | 'SendMessagePayload', ParentType, ContextType>;
+};
+
+export type SendMessageInvalidInputErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['SendMessageInvalidInputError'] = ResolversParentTypes['SendMessageInvalidInputError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SendMessagePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['SendMessagePayload'] = ResolversParentTypes['SendMessagePayload']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['BigInt'], any> {
   name: 'BigInt';
@@ -1068,13 +1195,22 @@ export type Resolvers<ContextType = any> = {
   OffsetPageInfo?: OffsetPageInfoResolvers<ContextType>;
   Student?: StudentResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  CreateFormResult?: CreateFormResultResolvers<ContextType>;
+  CreateFormInvalidInputError?: CreateFormInvalidInputErrorResolvers<ContextType>;
+  Error?: ErrorResolvers<ContextType>;
+  RateLimitError?: RateLimitErrorResolvers<ContextType>;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher?: GraphQLScalarType;
   password_String_NotNull_maxLength_30?: GraphQLScalarType;
+  LoginResult?: LoginResultResolvers<ContextType>;
+  InvalidAccountError?: InvalidAccountErrorResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   JWT?: GraphQLScalarType;
   message_String_NotNull_maxLength_80?: GraphQLScalarType;
   phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098?: GraphQLScalarType;
+  SendMessageResult?: SendMessageResultResolvers<ContextType>;
+  SendMessageInvalidInputError?: SendMessageInvalidInputErrorResolvers<ContextType>;
+  SendMessagePayload?: SendMessagePayloadResolvers<ContextType>;
   BigInt?: GraphQLScalarType;
   Byte?: GraphQLScalarType;
   Currency?: GraphQLScalarType;
@@ -1138,6 +1274,7 @@ export type DirectiveResolvers<ContextType = any> = {
   map?: MapDirectiveResolver<any, any, ContextType>;
   cacheControl?: CacheControlDirectiveResolver<any, any, ContextType>;
   constraint?: ConstraintDirectiveResolver<any, any, ContextType>;
+  ratelimit?: RatelimitDirectiveResolver<any, any, ContextType>;
 };
 
 import { ObjectID } from 'mongodb';

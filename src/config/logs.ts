@@ -3,7 +3,6 @@ import { env } from "config/env"
 import { Db } from "mongodb"
 import { mongoDB } from "./connectDB"
 import { ApolloServerPlugin, GraphQLRequestListener } from "apollo-server-plugin-base"
-import { ApolloError } from "apollo-server-errors"
 
 export const logOptions = [
 	ApolloServerPluginUsageReporting({
