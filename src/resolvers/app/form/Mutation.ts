@@ -12,11 +12,15 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 		})
 
 	if (!isValid) {
+		const suggestion =
+			args.input.answerList.length === validForm.length
+				? "답변의 길이를 확인해주세요"
+				: "답변의 개수를 확인해주세요"
 		return {
 			__typename: "CreateFormInvalidInputError",
 			message: "잘못된 형식의 요청입니다",
 			path: "createForm",
-			suggestion: "정확한 형식의 요청을 다시 시도해주세요",
+			suggestion,
 			tracing: {
 				message: `${args.input.club} 동아리 지원서 제출 실패 (학번 : ${args.input.studentId} / 이름 : ${args.input.name}) - 잘못된 형식`,
 				role: args.input.club,

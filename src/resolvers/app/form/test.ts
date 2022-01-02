@@ -1,6 +1,6 @@
 import { deepStrictEqual as deepEqual } from "assert"
 import request from "supertest"
-import { Form, FormConnection } from "config/models"
+import { Form, FormConnection, RateLimitError } from "config/models"
 import appPromise from "app"
 import { Server } from "http"
 import { mongoDB, redis } from "config"
@@ -37,15 +37,26 @@ describe("Form Service", () => {
 		const query = `
 				mutation ($input: CreateFormInput!) {
 					createForm(input: $input) {
-						studentId
-						name
-						club
-						answerList
-						portfolioURL
-						otherURLs
-						phoneNumber
-						formId
-						date
+						... on Form {
+							studentId
+							name
+							club
+							answerList
+							portfolioURL
+							otherURLs
+							phoneNumber
+							formId
+							date
+						}
+						... on Error {
+							message
+							path
+							suggestion
+						}
+						... on RateLimitError {
+							afterTry
+						}
+						__typename
 					}
 				}
 			`
@@ -67,7 +78,7 @@ describe("Form Service", () => {
 					.expect(200)
 				const { formId, date, ...data } = body.data.createForm as Form
 				formIds.push(formId)
-				deepEqual(data, input)
+				deepEqual(data, { ...input, __typename: "Form" })
 				deepEqual(typeof date, "string")
 			})
 
@@ -88,7 +99,7 @@ describe("Form Service", () => {
 					.expect(200)
 				const { formId, date, ...data } = body.data.createForm as Form
 				formIds.push(formId)
-				deepEqual(data, input)
+				deepEqual(data, { ...input, __typename: "Form" })
 				deepEqual(typeof date, "string")
 			})
 		})
@@ -110,7 +121,10 @@ describe("Form Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message.startsWith("답변의 길이가 초과되었습니다."), true)
+				deepEqual(body.data.createForm.__typename, "CreateFormInvalidInputError")
+				deepEqual(body.data.createForm.message, "잘못된 형식의 요청입니다")
+				deepEqual(body.data.createForm.path, "createForm")
+				deepEqual(body.data.createForm.suggestion, "답변의 길이를 확인해주세요")
 			})
 
 			it("Failed request (invalid answerList length) / Should be return errors", async () => {
@@ -128,7 +142,10 @@ describe("Form Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "답변 문항의 개수가 올바르지 않습니다")
+				deepEqual(body.data.createForm.__typename, "CreateFormInvalidInputError")
+				deepEqual(body.data.createForm.message, "잘못된 형식의 요청입니다")
+				deepEqual(body.data.createForm.path, "createForm")
+				deepEqual(body.data.createForm.suggestion, "답변의 개수를 확인해주세요")
 			})
 
 			it("Failed request (invalid club name) / Should be return errors", async () => {
@@ -161,13 +178,20 @@ describe("Form Service", () => {
 					portfolioURL: "https://www.naver.com/",
 					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
 				}
-				await redis.setex("canSubmit:::ffff:127.0.0.1", 60, "10")
+				await redis.setex("createForm:::ffff:127.0.0.1", 60, "10")
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message.startsWith("너무 많이 요청했습니다."), true)
+				const { afterTry, ...error } = body.data.createForm as RateLimitError
+				deepEqual(error, {
+					__typename: "RateLimitError",
+					message: "너무 많이 요청했습니다",
+					path: "createForm",
+					suggestion: "잠시 후에 시도해주세요",
+				})
+				deepEqual(typeof afterTry, "number")
 			})
 		})
 	})
@@ -253,7 +277,7 @@ describe("Form Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { club: "emotion", limit: 1 } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "Not Authorised!")
+				deepEqual(body.errors[0].message, "권한이 없습니다")
 			})
 		})
 	})
@@ -323,7 +347,7 @@ describe("Form Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { studentId: 10217, limit: 1 } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "Not Authorised!")
+				deepEqual(body.errors[0].message, "권한이 없습니다")
 			})
 		})
 	})
