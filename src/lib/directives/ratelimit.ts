@@ -9,7 +9,7 @@ export function ratelimitDirectiveTransformer(schema: GraphQLSchema, directiveNa
 			const ratelimitDirective = getDirective(schema, fieldConfig, directiveName)?.[0]
 			if (ratelimitDirective) {
 				const { max } = ratelimitDirective
-				const { resolve = defaultFieldResolver } = fieldConfig
+				const { resolve } = fieldConfig as { resolve: typeof defaultFieldResolver }
 				fieldConfig.resolve = async function (source, args, context: Context, info) {
 					const keyType =
 						ratelimitDirective.keyType === "IP"
