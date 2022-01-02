@@ -6,6 +6,7 @@ import { mongoDB, redis } from "config"
 import { env } from "config/env"
 import { Db } from "mongodb"
 import jwt from "jsonwebtoken"
+import { SendMessageInvalidInputError, RateLimitError } from "config/models"
 
 describe("Util Service", () => {
 	let app: Server
@@ -29,7 +30,21 @@ describe("Util Service", () => {
 	describe("Mutation sendMessage", () => {
 		const query = `
             mutation ($input: SendMessageInput!) {
-                sendMessage(input: $input) 
+                sendMessage (input: $input) {
+					... on SendMessagePayload {
+						message
+						status
+					}
+					... on Error {
+						message
+						path
+						suggestion
+					}
+					... on RateLimitError {
+						afterTry
+					}
+					__typename
+				}
             }
         `
 		describe("Success", () => {
@@ -43,8 +58,12 @@ describe("Util Service", () => {
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
 					.send(JSON.stringify({ query, variables: { input } }))
-					.expect(200)
-				deepEqual(body.data.sendMessage, true)
+
+				deepEqual(body.data.sendMessage, {
+					message: "메세지 전송 성공",
+					status: true,
+					__typename: "SendMessagePayload",
+				})
 			})
 		})
 
@@ -59,7 +78,7 @@ describe("Util Service", () => {
 					.set("Content-Type", "application/json")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "Not Authorised!")
+				deepEqual(body.errors[0].message, "권한이 없습니다")
 			})
 
 			it("Failed request (invalid token) / Should be return errors", async () => {
@@ -73,7 +92,7 @@ describe("Util Service", () => {
 					.set("Authorization", `Bearer ${token.invalid}`)
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "Not Authorised!")
+				deepEqual(body.errors[0].message, "권한이 없습니다")
 			})
 
 			it("Failed request (invalid jwt) / Should be return errors", async () => {
@@ -87,7 +106,7 @@ describe("Util Service", () => {
 					.set("Authorization", "Bearer sunrin")
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "Not Authorised!")
+				deepEqual(body.errors[0].message, "권한이 없습니다")
 			})
 
 			it("Failed request (payload is too large) / Should be return errors", async () => {
@@ -101,11 +120,17 @@ describe("Util Service", () => {
 					.set("Authorization", `Bearer ${token.teacher}`)
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "전송할 수 있는 최대 개수는 80개 입니다")
+				const data = body.data.sendMessage as SendMessageInvalidInputError
+				deepEqual(data, {
+					__typename: "SendMessageInvalidInputError",
+					message: "전송 메세지 개수 초과",
+					path: "sendMessage",
+					suggestion: "한번에 전송하는 메세지를 80개 이하로 해야합니다",
+				})
 			})
 
 			it("Failed request (too many requests) / Should be return errors", async () => {
-				await redis.setex("sms:teacher", 10, "3")
+				await redis.setex("sendMessage:teacher", 10, "3")
 				const input = {
 					message: "실패해야하는 메세지",
 					phoneNumberList: [env.MY_PHONE],
@@ -116,7 +141,14 @@ describe("Util Service", () => {
 					.set("Authorization", `Bearer ${token.teacher}`)
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
-				deepEqual(body.errors[0].message, "전송은 600초당 최대 3번 가능합니다")
+				const data = body.data.sendMessage as RateLimitError
+				deepEqual(data, {
+					__typename: "RateLimitError",
+					message: "너무 자주 요청했습니다",
+					path: "sendMessage",
+					suggestion: "잠시 후에 시도해주세요",
+					afterTry: data.afterTry,
+				})
 			})
 		})
 	})

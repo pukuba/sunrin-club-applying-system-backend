@@ -126,7 +126,6 @@ describe("Form Service", () => {
 				deepEqual(body.data.createForm.path, "createForm")
 				deepEqual(body.data.createForm.suggestion, "답변의 길이를 확인해주세요")
 			})
-
 			it("Failed request (invalid answerList length) / Should be return errors", async () => {
 				const input = {
 					studentId: 10217,
@@ -187,7 +186,7 @@ describe("Form Service", () => {
 				const { afterTry, ...error } = body.data.createForm as RateLimitError
 				deepEqual(error, {
 					__typename: "RateLimitError",
-					message: "너무 많이 요청했습니다",
+					message: "너무 자주 요청했습니다",
 					path: "createForm",
 					suggestion: "잠시 후에 시도해주세요",
 				})
