@@ -21,6 +21,12 @@ directive @cacheControl(
     inheritMaxAge: Boolean
 ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
 
+directive @ratelimit(
+    ttl: UnsignedInt!,
+    max: UnsignedInt!,
+    key: String!
+) on FIELD_DEFINITION 
+
 type CursorPageInfo {
     hasNextPage: Boolean!
     startCursor: ObjectID

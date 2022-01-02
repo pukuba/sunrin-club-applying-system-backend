@@ -35,37 +35,51 @@ input CreateFormInput {
     otherURLs: [URL]!
 }
 
+type CreateFormInvalidInputError implements Error {
+    message: String!
+    path: String!
+    suggestion: String!
+}
+
+type RateLimitError implements Error {
+    message: String!
+    path: String!
+    suggestion: String!
+    afterTry: UnsignedInt!
+}
+
+union CreateFormResult = Form | CreateFormInvalidInputError | RateLimitError
+
 extend type Mutation {
 
     # 동아리 신청서 전송
     createForm(
         input: CreateFormInput!
-    ): Form!
+    ): CreateFormResult! @ratelimit(ttl: 60, max: 10, key: "createForm")
 }
 
 extend type Query {
 
-    # 동아리 별로 신청서를 가져옵니다
-    getFormByClub(
-        club: Club!
-        limit: UnsignedInt = 10
-        cursor: ObjectID
-    ): FormConnection!
-
-    # 학번으로 신청서를 가져옵니다
-    getFormByStudentId(
-        studentId: StudentID!
-        limit: UnsignedInt = 10
-        cursor: ObjectID
-    ): FormConnection!
-
-    # 동아리로 동아리 지원자 리스트 가져오기
+    # 동아리 신청자 명단 조회
     getStudentByClub(
         club: Club!
     ): [Student!]! 
 
     # 동아리 지원 현황 가져오기
     getLiveFormStatus: [FormStatus!]!
+
+    getFormByClub(
+        club: Club!
+        limit: UnsignedInt = 10
+        cursor: ObjectID
+    ): FormConnection!
+
+     # 학번으로 신청서를 가져옵니다
+    getFormByStudentId(
+        studentId: StudentID!
+        limit: UnsignedInt = 10
+        cursor: ObjectID
+    ): FormConnection!
 }
 
 type FormStatus {

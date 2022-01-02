@@ -12,6 +12,7 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 	}
 	const { insertedId: formId } = await context.db.collection("form").insertOne(document)
 	return {
+		__typename: "Form",
 		...document,
 		formId,
 		extensions: {

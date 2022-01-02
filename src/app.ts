@@ -7,7 +7,7 @@ import { express as voyagerMiddleware } from "graphql-voyager/middleware"
 import { ApolloServer } from "apollo-server-express"
 import { createServer, Server } from "http"
 import depthLimit from "graphql-depth-limit"
-import { permissions, decodeToken } from "lib"
+import { permissions, decodeToken, ratelimitDirectiveTransformer } from "lib"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { GraphQLUpload } from "graphql-upload"
 import { typeDefs as ScalarNameTypeDefinition, resolvers as scalarResolvers } from "graphql-scalars"
@@ -29,7 +29,7 @@ app.use(bodyParserGraphQL())
 app.use("/voyager", voyagerMiddleware({ endpointUrl: "/api" }))
 app.use("/graphql", expressPlayground({ endpoint: "/api" }))
 
-const schema = constraintDirective()(
+let schema = constraintDirective()(
 	makeExecutableSchema({
 		typeDefs: [...typeDefs, ...ScalarNameTypeDefinition, constraintDirectiveTypeDefs],
 		resolvers: {
@@ -41,10 +41,12 @@ const schema = constraintDirective()(
 	})
 )
 
+schema = applyMiddleware(schema, permissions)
+schema = ratelimitDirectiveTransformer(schema, "ratelimit")
 export default (async () => {
 	const db = await mongoDB.get()
 	const server = new ApolloServer({
-		schema: applyMiddleware(schema, permissions),
+		schema,
 		context: ({ req }) => {
 			const ip = req.headers["x-forwarded-for"] || req.headers["CF-Connecting-IP"] || req.socket.remoteAddress
 			const token = req.headers["authorization"]

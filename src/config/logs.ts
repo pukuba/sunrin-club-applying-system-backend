@@ -64,6 +64,7 @@ export const ApolloLogPlugin = (): ApolloServerPlugin => {
 						willResolveField(fieldResolve) {
 							return async (err, result) => {
 								const obj = getExtensions(result)
+								// apollo error case
 								if (obj?.extensions && obj.extensions.message) {
 									const db = (await mongoDB.get()) as Db
 									await db.collection("log").insertOne({

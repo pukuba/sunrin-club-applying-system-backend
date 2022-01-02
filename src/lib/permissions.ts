@@ -1,11 +1,10 @@
-import { shield, and } from "graphql-shield"
-import { isValidForm, canSubmit, canSMS, isValidUser, isValidGetFormByClub } from "./rule"
+import { shield } from "graphql-shield"
+import { isValidUser, isValidGetFormByClub } from "./rule"
 
 export const permissions = shield(
 	{
 		Mutation: {
-			createForm: and(isValidForm, canSubmit),
-			sendMessage: and(isValidUser, canSMS),
+			sendMessage: isValidUser,
 		},
 		Query: {
 			getFormByClub: isValidGetFormByClub,
