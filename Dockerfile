@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:16
 
 RUN mkdir -p /server
 
@@ -6,7 +6,7 @@ WORKDIR /server
 
 ADD ./ /server
 
-RUN yarn install --production; \
+RUN yarn install; \
     yarn build
 
 EXPOSE 3000

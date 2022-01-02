@@ -15,8 +15,8 @@ services:
                     - "node.role==manager"
             resources:
                 limits:
-                    cpus: "4"
-                    memory: "6g"
+                    cpus: "2"
+                    memory: "4g"
                 reservations:
                     cpus: "1"
                     memory: "1g"
@@ -33,23 +33,23 @@ services:
 
     express:
         container_name: express
-        image: was:latest
+        image: pukuba/sunrin_api:latest
         volumes:
             - ./file:/server/file
         deploy:
             placement:
                 constraints:
-                    - "node.role==worker"
+                    - "node.hostname==worker"
             resources:
                 limits:
                     cpus: "1"
-                    memory: "2g"
+                    memory: "1g"
                 reservations:
                     cpus: "1"
                     memory: "1g"
                     
             mode: replicated
-            replicas: 12
+            replicas: 8
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:3000/.well-known/apollo/server-health"]
             interval: 10s
