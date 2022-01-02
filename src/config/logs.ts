@@ -22,7 +22,7 @@ export const logOptions = [
 	}),
 ]
 
-const getExtensions = (response: any): any => {
+const getLogData = (response: any): any => {
 	if (
 		typeof response !== "object" ||
 		response === null ||
@@ -38,19 +38,19 @@ const getExtensions = (response: any): any => {
 	}
 
 	for (const key in response) {
-		if (key === "extensions" && response[key].message) {
+		if (key === "tracing" && response[key].message) {
 			const date = new Date(Date.now() + 1000 * 60 * 60 * 9).toISOString()
-			delete response[key]?.code
 			return {
-				extensions: {
-					...response[key],
-					status: !(response instanceof ApolloError),
+				tracing: {
+					message: response[key].message,
+					status: response["path"] && response["suggestion"] ? "fail" : "success",
 					date,
+					role: response[key].role,
 				},
 			}
 		}
-		const obj = getExtensions(response[key]) as any
-		if (obj?.extensions) return obj
+		const obj = getLogData(response[key]) as any
+		if (obj?.tracing) return obj
 	}
 	return response
 }
@@ -63,15 +63,17 @@ export const ApolloLogPlugin = (): ApolloServerPlugin => {
 					return {
 						willResolveField(fieldResolve) {
 							return async (err, result) => {
-								const obj = getExtensions(result)
-								// apollo error case
-								if (obj?.extensions && obj.extensions.message) {
-									const db = (await mongoDB.get()) as Db
-									await db.collection("log").insertOne({
-										...obj.extensions,
+								const obj = getLogData(result)
+								if (obj?.tracing && obj.tracing.message) {
+									const data = {
+										...obj.tracing,
 										ip: fieldResolve.context.ip,
-										role: fieldResolve.context.user?.role || "unknown",
-									})
+									}
+									if (!data["role"]) {
+										data["role"] = fieldResolve.context.user?.role || "unknown"
+									}
+									const db = (await mongoDB.get()) as Db
+									await db.collection("log").insertOne(data)
 								}
 								return result
 							}

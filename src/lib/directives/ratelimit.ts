@@ -1,5 +1,6 @@
 import { mapSchema, getDirective, MapperKind } from "@graphql-tools/utils"
 import { defaultFieldResolver, GraphQLSchema } from "graphql"
+import { Context } from "config"
 
 export function ratelimitDirectiveTransformer(schema: GraphQLSchema, directiveName: string) {
 	return mapSchema(schema, {
@@ -8,11 +9,11 @@ export function ratelimitDirectiveTransformer(schema: GraphQLSchema, directiveNa
 			if (ratelimitDirective) {
 				const { max } = ratelimitDirective
 				const { resolve = defaultFieldResolver } = fieldConfig
-				fieldConfig.resolve = async function (source, args, context, info) {
+				fieldConfig.resolve = async function (source, args, context: Context, info) {
 					const ip = context.ip
 					const key = `${ratelimitDirective.key}:${ip}`
 					const count = await context.redis.get(key)
-					if (count >= max) {
+					if (count && count >= max) {
 						const ttl = await context.redis.ttl(key)
 						return {
 							__typename: "RateLimitError",
@@ -22,8 +23,13 @@ export function ratelimitDirectiveTransformer(schema: GraphQLSchema, directiveNa
 							afterTry: ttl,
 						}
 					}
-					await context.redis.incr(key)
-					return await resolve(source, args, context, info)
+					if (count === null) {
+						await context.redis.setex(key, ratelimitDirective.ttl, "1")
+					} else {
+						await context.redis.incr(key)
+					}
+					const res = await resolve(source, args, context, info)
+					return res
 				}
 				return fieldConfig
 			}
