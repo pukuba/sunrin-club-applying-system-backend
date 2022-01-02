@@ -69,11 +69,7 @@ export const getFormByStudentId = async (parent: void, args: QueryGetFormByStude
 }
 
 export const getStudentByClub = async (parent: void, args: QueryGetStudentByClubArgs, context: Context) => {
-	const { club } = args
-	let option = {}
-	if (club) {
-		option = { club: club }
-	}
+	const option = { club: args.club }
 	const students = await context.db
 		.collection("form")
 		.aggregate([{ $match: option }, { $group: { _id: { studentId: "$studentId", name: "$name" } } }])
