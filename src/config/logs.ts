@@ -42,7 +42,7 @@ const getLogData = (response: any): any => {
 			return {
 				tracing: {
 					message: response[key].message,
-					status: response["path"] && response["suggestion"] ? "fail" : "success",
+					status: response["path"] && response["suggestion"] ? false : true,
 					date,
 					role: response[key].role,
 				},

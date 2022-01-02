@@ -9,9 +9,9 @@ export const getLogByKeyword = async (
 ) => {
 	const { keyword, limit, page } = args
 	const options: QueryOptions = {}
-	const club = context.user.role
-	if (club !== "teacher") {
-		options["club"] = club
+	const role = context.user.role
+	if (role !== "teacher") {
+		options["role"] = role
 	}
 	if (keyword.length > 0) {
 		options["message"] = new RegExp(keyword)

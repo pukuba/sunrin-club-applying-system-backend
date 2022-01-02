@@ -263,8 +263,7 @@ export type LogConnection = {
 
 export type Log = {
   __typename?: 'Log';
-  action: Scalars['String'];
-  club?: Maybe<Scalars['Club']>;
+  date: Scalars['DateTime'];
   ip: Scalars['IP'];
   logId: Scalars['ObjectID'];
   message: Scalars['String'];
@@ -852,8 +851,7 @@ export type LogConnectionResolvers<ContextType = any, ParentType extends Resolve
 };
 
 export type LogResolvers<ContextType = any, ParentType extends ResolversParentTypes['Log'] = ResolversParentTypes['Log']> = {
-  action?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  club?: Resolver<Maybe<ResolversTypes['Club']>, ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   ip?: Resolver<ResolversTypes['IP'], ParentType, ContextType>;
   logId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

@@ -30,13 +30,12 @@ describe("Auth Service", () => {
                     totalCount
                     __typename
                     edges {
-                        action
                         message
                         logId
                         status
                         ip
-						club
                         role
+						date
                     }
                     pageInfo {
                         nowPage
@@ -59,28 +58,30 @@ describe("Auth Service", () => {
 					.expect(200)
 				const data = body.data.getLogByKeyword as LogConnection
 				deepEqual(data.__typename, "LogConnection")
-				deepEqual(data.totalCount, 3)
+				deepEqual(data.totalCount, 4)
 				deepEqual(data.edges[0], {
-					action: "지원서 제출",
-					message: "요청 횟수 초과 (학번 : 10217)",
+					message: "emotion 동아리 지원서 제출 실패 (학번 : 10217 / 이름 : 남승원) - 잘못된 형식",
 					status: false,
+					role: "emotion",
 					ip: "::ffff:127.0.0.1",
-					role: "unknown",
+					date: data.edges[0].date,
 					logId: data.edges[0].logId,
-					club: "emotion",
 				})
-				deepEqual(data.edges[2], {
-					action: "동아리 지원서 제출",
-					message: "emotion 동아리 지원서 제출 (학번 : 10217)",
-					logId: data.edges[2].logId,
+				deepEqual(data.edges[3], {
+					message: "emotion 동아리 지원서 제출 성공 (학번 : 10217 / 이름 : 남승원)",
+					date: data.edges[3].date,
+					logId: data.edges[3].logId,
 					status: true,
+					role: "emotion",
 					ip: "::ffff:127.0.0.1",
-					role: "unknown",
-					club: "emotion",
+				})
+				deepEqual(data.pageInfo, {
+					nowPage: 1,
+					maxPage: 1,
 				})
 			})
 
-			it("Successful request (teamlog account) / Should be return LogConnection", async () => {
+			it("Successful request (teacher account) / Should be return LogConnection", async () => {
 				const variables = {
 					limit: 10,
 					page: 1,
@@ -96,13 +97,12 @@ describe("Auth Service", () => {
 				deepEqual(data.__typename, "LogConnection")
 				deepEqual(data.totalCount, 3)
 				deepEqual(data.edges[0], {
-					action: "지원서 제출",
-					message: "요청 횟수 초과 (학번 : 10217)",
+					message: "emotion 동아리 지원서 제출 실패 (학번 : 10217 / 이름 : 남승원) - 잘못된 형식",
 					status: false,
 					ip: "::ffff:127.0.0.1",
-					role: "unknown",
+					role: "emotion",
 					logId: data.edges[0].logId,
-					club: "emotion",
+					date: data.edges[0].date,
 				})
 			})
 		})

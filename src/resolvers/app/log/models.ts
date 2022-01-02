@@ -3,7 +3,7 @@ import { ClubType } from "config"
 export type MongoQuery = [
 	{
 		$match: {
-			club?: ClubType
+			role?: ClubType
 			message?: RegExp
 		}
 	},
@@ -13,6 +13,6 @@ export type MongoQuery = [
 ]
 
 export interface QueryOptions {
-	club?: ClubType
+	role?: ClubType
 	message?: RegExp
 }

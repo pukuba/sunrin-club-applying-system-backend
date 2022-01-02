@@ -10,13 +10,12 @@ extend type Query {
 }
 
 type Log {
-    action: String!
-    message: String!
-    club: Club
-    logId: ObjectID!
-    status: Boolean!
     ip: IP!
+    message: String!
+    status: Boolean!
+    date: DateTime!
     role: String!
+    logId: ObjectID!
 }
 
 type LogConnection {
