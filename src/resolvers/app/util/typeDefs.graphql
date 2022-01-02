@@ -1,7 +1,7 @@
 extend type Mutation {
     sendMessage(
         input: SendMessageInput!
-    ): SendMessageResult! @ratelimit(ttl: 600, max: 3, key: "sendMessage")
+    ): SendMessageResult! @ratelimit(ttl: 600, max: 3, key: "sendMessage", keyType: ROLE)
 }
 
 input SendMessageInput {
@@ -9,7 +9,7 @@ input SendMessageInput {
     phoneNumberList: [String!]! @constraint(pattern: "^010([0-9]{8})$")
 }
 
-union SendMessageResult = SendMessageInvalidInputError | SendMessagePayload
+union SendMessageResult = SendMessageInvalidInputError | SendMessagePayload | RateLimitError
 
 type SendMessageInvalidInputError implements Error {
     message: String!

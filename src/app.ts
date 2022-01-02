@@ -41,8 +41,7 @@ let schema = constraintDirective()(
 	})
 )
 
-schema = applyMiddleware(schema, permissions)
-schema = ratelimitDirectiveTransformer(schema, "ratelimit")
+schema = applyMiddleware(ratelimitDirectiveTransformer(schema, "ratelimit"), permissions)
 export default (async () => {
 	const db = await mongoDB.get()
 	const server = new ApolloServer({

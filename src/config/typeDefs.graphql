@@ -21,10 +21,16 @@ directive @cacheControl(
     inheritMaxAge: Boolean
 ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
 
+enum KeyType {
+    IP
+    ROLE
+}
+
 directive @ratelimit(
     ttl: UnsignedInt!,
     max: UnsignedInt!,
     key: String!
+    keyType: KeyType!
 ) on FIELD_DEFINITION 
 
 type CursorPageInfo {

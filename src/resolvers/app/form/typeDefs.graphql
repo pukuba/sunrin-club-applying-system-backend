@@ -55,7 +55,7 @@ extend type Mutation {
     # 동아리 신청서 전송
     createForm(
         input: CreateFormInput!
-    ): CreateFormResult! @ratelimit(ttl: 60, max: 10, key: "createForm")
+    ): CreateFormResult! @ratelimit(ttl: 60, max: 10, key: "createForm", keyType: IP)
 }
 
 extend type Query {
