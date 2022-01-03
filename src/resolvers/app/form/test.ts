@@ -162,7 +162,7 @@ describe("Form Service", () => {
 					.expect(400)
 				deepEqual(
 					body.errors[0].message,
-					'Variable "$input" got invalid value "emo" at "input.club"; Expected type Club. 동아리 이름은 nefus, layer7, unifox, teamlog, emotion 중 하나입니다'
+					'Variable "$input" got invalid value "emo" at "input.club"; Expected type "Club". 동아리 이름은 nefus, layer7, unifox, teamlog, emotion 중 하나입니다'
 				)
 			})
 

@@ -5,7 +5,7 @@ let db: Db | null = null
 const connectDB = () => {
 	const connect = async () => {
 		try {
-			const client = await MongoClient.connect(env.MONGO_HOST, {
+			const client = await MongoClient.connect(env.NODE_ENV ? "mongodb://localhost:27017/test" : env.MONGO_HOST, {
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
 			})
@@ -40,7 +40,7 @@ import { createClient } from "redis"
 
 import { promisify } from "util"
 
-const redisClient = createClient(env.REDIS_HOST)
+const redisClient = createClient(env.NODE_ENV === "test" ? "redis://localhost" : env.REDIS_HOST)
 export const redis = {
 	get: promisify(redisClient.get).bind(redisClient),
 	setex: promisify(redisClient.setex).bind(redisClient),

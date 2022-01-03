@@ -48,7 +48,7 @@ describe("Server running test", () => {
 				.expect(400)
 			deepEqual(
 				body.errors[0].message,
-				'Expected type data_String_NotNull_pattern_ping!, found "pong"; Must match ^ping$'
+				'Expected value of type "data_String_NotNull_pattern_ping!", found "pong"; Must match ^ping$'
 			)
 		})
 	})
