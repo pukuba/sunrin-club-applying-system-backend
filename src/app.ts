@@ -47,7 +47,7 @@ export default (async () => {
 	const server = new ApolloServer({
 		schema,
 		context: ({ req }) => {
-			const ip = req.headers["x-forwarded-for"] || req.headers["CF-Connecting-IP"] || req.socket.remoteAddress
+			const ip = req.headers["CF-Connecting-IP"] || req.headers["x-forwarded-for"] || req.socket.remoteAddress
 			const token = req.headers["authorization"]
 			return { db, redis, ip, user: decodeToken(token) }
 		},
