@@ -8,6 +8,7 @@ services:
         volumes:
             - ./proxy/nginx.conf:/etc/nginx/nginx.conf
             - ./proxy/proxy.conf:/etc/nginx/proxy.conf
+            - ./proxy/cf.conf:/etc/nginx/cf.conf
         deploy:
             placement:
                 constraints: [node.role == manager]
