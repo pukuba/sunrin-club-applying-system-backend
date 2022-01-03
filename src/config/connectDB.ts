@@ -5,10 +5,13 @@ let db: Db | null = null
 const connectDB = () => {
 	const connect = async () => {
 		try {
-			const client = await MongoClient.connect(env.NODE_ENV ? "mongodb://localhost:27017/test" : env.MONGO_HOST, {
-				useNewUrlParser: true,
-				useUnifiedTopology: true,
-			})
+			const client = await MongoClient.connect(
+				env.NODE_ENV === "test" ? "mongodb://localhost:27017/test" : env.MONGO_HOST,
+				{
+					useNewUrlParser: true,
+					useUnifiedTopology: true,
+				}
+			)
 			const _db = client.db()
 			return _db
 		} catch (e) {
