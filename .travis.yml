@@ -1,6 +1,7 @@
 services:
   - mongodb
   - redis
+  - docker
 
 language: node_js
 
@@ -21,3 +22,11 @@ script:
 
 after_success:
   - yarn codecov
+
+after_deploy:
+  - env > ./.env
+  - yarn build
+  - echo ${DOCKER_PW} > ./pw.txt
+  - docker build -t ${DOCKER_ID}/${DOCKER_REPO}:latest .
+  - cat ./pw.txt | docker login --username ${DOCKER_ID} --password-stdin
+  - docker push ${DOCKER_ID}/${DOCKER_REPO}:latest
