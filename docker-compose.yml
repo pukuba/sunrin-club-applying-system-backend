@@ -9,10 +9,9 @@ services:
             - ./proxy/nginx.conf:/etc/nginx/nginx.conf
             - ./proxy/proxy.conf:/etc/nginx/proxy.conf
             - ./proxy/cf.conf:/etc/nginx/cf.conf
-            - ./proxy/allow-cloudflare-only.conf:/etc/nginx/allow-cloudflare-only.conf
         deploy:
             placement:
-                constraints: [node.role == manager]
+                constraints: [node.id == nsx8xqt72q7bmpsz9aresl638]
             resources:
                 reservations:
                     cpus: "0.8"
@@ -43,7 +42,7 @@ services:
         image: redis:latest
         deploy:
             placement:
-                constraints: [node.role == manager]
+                constraints: [node.id == 7lh0stcsfn1xxp65xglleyhgf]
             mode: replicated    
             resources:
                 reservations:
