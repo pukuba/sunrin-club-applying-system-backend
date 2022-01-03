@@ -6,8 +6,7 @@ WORKDIR /server
 
 ADD ./ /server
 
-RUN yarn install; \
-    yarn build
+RUN yarn install --production
 
 EXPOSE 3000
 

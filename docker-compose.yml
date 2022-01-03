@@ -1,9 +1,8 @@
-version: "3.8"
+version: "3.7"
 
 services:
     proxy:
         image: nginx:latest
-        container_name: proxy
         ports:
             - "80:80"
         volumes:
@@ -11,15 +10,12 @@ services:
             - ./proxy/proxy.conf:/etc/nginx/proxy.conf
         deploy:
             placement:
-                constraints:
-                    - "node.role==manager"
+                constraints: [node.role == manager]
             resources:
-                limits:
-                    cpus: "2"
-                    memory: "4g"
                 reservations:
-                    cpus: "1"
-                    memory: "1g"
+                    cpus: "0.8"
+                    memory: "800m"
+
             mode: replicated
             replicas: 1
         healthcheck:
@@ -28,44 +24,32 @@ services:
             timeout: 5s
             retries: 3
             start_period: 10s
-        depends_on:
-            - express
 
     express:
-        container_name: express
         image: pukuba/sunrin_api:latest
-        volumes:
-            - ./file:/server/file
         deploy:
             placement:
-                constraints:
-                    - "node.hostname==worker"
+                constraints: [node.role == worker]
             resources:
-                limits:
-                    cpus: "1"
-                    memory: "1g"
                 reservations:
-                    cpus: "1"
-                    memory: "1g"
-                    
+                    cpus: "0.8"
+                    memory: "800m"
             mode: replicated
             replicas: 8
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:3000/.well-known/apollo/server-health"]
-            interval: 10s
-            timeout: 5s
-            retries: 3
-            start_period: 10s
-        depends_on:
-            - redis
 
     redis:
         image: redis:latest
-        container_name: redis
         deploy:
             placement:
-                constraints:
-                    - "node.role==manager"
-            mode: replicated
+                constraints: [node.role == manager]
+            mode: replicated    
+            resources:
+                reservations:
+                    cpus: "0.8"
+                    memory: "800m"
             replicas: 1
-        
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
