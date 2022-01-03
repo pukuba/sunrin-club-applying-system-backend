@@ -22,8 +22,6 @@ script:
 
 after_success:
   - yarn codecov
-
-after_deploy:
   - env > ./.env
   - yarn build
   - echo ${DOCKER_PW} > ./pw.txt
