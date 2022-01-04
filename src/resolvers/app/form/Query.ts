@@ -3,7 +3,7 @@ import { MongoQuery } from "./models"
 import { QueryGetFormByClubArgs, QueryGetFormByStudentIdArgs, QueryGetStudentByClubArgs } from "config/models"
 
 export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, context: Context) => {
-	const { limit, cursor, club } = args
+	const { limit = 10, cursor, club } = args
 	const { db } = context
 	const query: MongoQuery = [
 		{
@@ -12,7 +12,7 @@ export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, 
 			},
 		},
 		{ $sort: { _id: -1 } },
-		{ $limit: limit as number },
+		{ $limit: limit },
 	]
 
 	if (cursor) {
@@ -34,10 +34,10 @@ export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, 
 }
 
 export const getFormByStudentId = async (parent: void, args: QueryGetFormByStudentIdArgs, context: RequiredContext) => {
-	const { limit, cursor, studentId } = args
+	const { limit = 10, cursor, studentId } = args
 	const club = context.user.role
 	let options = {}
-	if (club !== "teacher") {
+	if (club !== "TEACHER") {
 		options = { club }
 	}
 	const query: MongoQuery = [
@@ -48,7 +48,7 @@ export const getFormByStudentId = async (parent: void, args: QueryGetFormByStude
 			},
 		},
 		{ $sort: { _id: -1 } },
-		{ $limit: limit as number },
+		{ $limit: limit },
 	]
 	if (cursor) {
 		query[0].$match["_id"] = { $gt: new ObjectID(cursor) }

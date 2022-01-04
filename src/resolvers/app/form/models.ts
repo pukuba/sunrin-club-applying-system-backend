@@ -1,9 +1,10 @@
-import { ObjectID, ClubType } from "config"
+import { ObjectID } from "config"
+import { Club } from "config/models"
 
 export type MongoQuery = [
 	{
 		$match: {
-			club?: ClubType
+			club?: Club
 			_id?: { $gt: ObjectID }
 			studentId?: string
 		}
@@ -13,5 +14,5 @@ export type MongoQuery = [
 ]
 
 export interface QueryOptions {
-	club?: ClubType
+	club?: Club
 }

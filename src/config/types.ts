@@ -1,4 +1,5 @@
 import { ReadStream } from "fs"
+import { RequireFields, Club } from "./models"
 
 export interface File {
 	filename: string
@@ -15,16 +16,13 @@ export interface Context {
 	ip: string
 	user: {
 		id?: string
-		role?: ClubType | "teacher"
+		role?: Club | "TEACHER"
 	} | null
 }
 
-export interface RequiredContext extends Context {
-	user: {
-		id: string
-		role: ClubType | "teacher"
-	}
-}
+export type Role = Club | "TEACHER"
+
+export type RequiredContext = RequireFields<Context, keyof Context>
 
 export { ObjectID }
 
@@ -32,5 +30,3 @@ export interface PaginationInput {
 	offset: number
 	cursor: string | null
 }
-
-export type ClubType = "teamlog" | "emotion" | "layer7" | "nefus" | "unifox"

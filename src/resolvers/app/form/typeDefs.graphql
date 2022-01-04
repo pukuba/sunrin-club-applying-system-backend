@@ -1,5 +1,12 @@
 scalar StudentID
-scalar Club
+
+enum Club {
+    UNIFOX
+    LAYER7
+    EMOTION
+    NEFUS
+    TEAMLOG
+}
 
 interface StudentInfo {
     studentId: StudentID!

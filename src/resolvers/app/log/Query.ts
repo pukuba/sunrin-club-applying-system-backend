@@ -7,10 +7,10 @@ export const getLogByKeyword = async (
 	args: RequireFields<QueryGetLogByKeywordArgs, "keyword">,
 	context: RequiredContext
 ) => {
-	const { keyword, limit, page } = args
+	const { keyword = "", limit = 10, page } = args
 	const options: QueryOptions = {}
 	const role = context.user.role
-	if (role !== "teacher") {
+	if (role !== "TEACHER") {
 		options["role"] = role
 	}
 	if (keyword.length > 0) {

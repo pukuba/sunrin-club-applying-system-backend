@@ -21,15 +21,15 @@ describe("Form Service", () => {
 		app = await appPromise
 		const db = (await mongoDB.get()) as Db
 		const obj = [
-			{ id: "teacher11", password: "test", role: "teacher" },
-			{ id: "emotion01", password: "test", role: "emotion" },
+			{ id: "teacher11", password: "test", role: "TEACHER" },
+			{ id: "emotion01", password: "test", role: "EMOTION" },
 		]
 		await db.collection("user").insertMany(obj)
 		obj.forEach(x => deletedUserIds.push(x.id))
 		token = {
-			teacher: jwt.sign({ role: "teacher", id: "teacher11" }, env.JWT_SECRET),
-			emotion: jwt.sign({ role: "emotion", id: "emotion01" }, env.JWT_SECRET),
-			invalid: jwt.sign({ role: "teacher", id: "01010100" }, env.JWT_SECRET),
+			teacher: jwt.sign({ role: "TEACHER", id: "teacher11" }, env.JWT_SECRET),
+			emotion: jwt.sign({ role: "EMOTION", id: "emotion01" }, env.JWT_SECRET),
+			invalid: jwt.sign({ role: "TEACHER", id: "01010100" }, env.JWT_SECRET),
 		}
 	})
 
@@ -65,7 +65,7 @@ describe("Form Service", () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
-					club: "emotion",
+					club: "EMOTION",
 					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3", "자소서 문항4", "자소서 문항5"],
 					phoneNumber: "01000000000",
 					portfolioURL: "https://www.naver.com/",
@@ -86,7 +86,7 @@ describe("Form Service", () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
-					club: "emotion",
+					club: "EMOTION",
 					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3", "자소서 문항4", "자소서 문항5"],
 					phoneNumber: "01000000000",
 					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
@@ -108,7 +108,7 @@ describe("Form Service", () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
-					club: "emotion",
+					club: "EMOTION",
 					answerList: ["", "", "", ""],
 					phoneNumber: "01000000000",
 					portfolioURL: "https://www.naver.com/",
@@ -129,7 +129,7 @@ describe("Form Service", () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
-					club: "emotion",
+					club: "EMOTION",
 					answerList: ["", ""],
 					phoneNumber: "01000000000",
 					portfolioURL: "https://www.naver.com/",
@@ -162,7 +162,7 @@ describe("Form Service", () => {
 					.expect(400)
 				deepEqual(
 					body.errors[0].message,
-					'Variable "$input" got invalid value "emo" at "input.club"; Expected type "Club". 동아리 이름은 nefus, layer7, unifox, teamlog, emotion 중 하나입니다'
+					'Variable "$input" got invalid value "emo" at "input.club"; Value "emo" does not exist in "Club" enum.'
 				)
 			})
 
@@ -170,7 +170,7 @@ describe("Form Service", () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
-					club: "emotion",
+					club: "EMOTION",
 					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3", "자소서 문항4", "자소서 문항5"],
 					phoneNumber: "01000000000",
 					portfolioURL: "https://www.naver.com/",
@@ -227,7 +227,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.emotion}`)
-					.send(JSON.stringify({ query, variables: { club: "emotion", limit: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "EMOTION", limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
 				deepEqual(totalCount, 2)
@@ -242,7 +242,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
-					.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[0], limit: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "EMOTION", cursor: formIds[0], limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
 				deepEqual(totalCount, 2)
@@ -257,7 +257,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
-					.send(JSON.stringify({ query, variables: { club: "emotion", cursor: formIds[1], limit: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "EMOTION", cursor: formIds[1], limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getFormByClub as FormConnection
 				deepEqual(totalCount, 2)
@@ -273,7 +273,7 @@ describe("Form Service", () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
-					.send(JSON.stringify({ query, variables: { club: "emotion", limit: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "EMOTION", limit: 1 } }))
 					.expect(200)
 				deepEqual(body.errors[0].message, "권한이 없습니다")
 			})
@@ -314,6 +314,7 @@ describe("Form Service", () => {
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
 					.send(JSON.stringify({ query, variables: { studentId: 10217, limit: 1 } }))
+					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getFormByStudentId as FormConnection
 				deepEqual(totalCount, 2)
 				deepEqual(pageInfo.hasNextPage, true)
@@ -366,7 +367,7 @@ describe("Form Service", () => {
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.emotion}`)
-					.send(JSON.stringify({ query, variables: { club: "emotion" } }))
+					.send(JSON.stringify({ query, variables: { club: "EMOTION" } }))
 					.expect(200)
 				deepEqual(body.data.getStudentByClub.length, 1)
 			})
@@ -384,11 +385,11 @@ describe("Form Service", () => {
 				otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
 			}
 			const inputData = [
-				{ ...defaultObj, studentId: 10216, club: "emotion" },
-				{ ...defaultObj, studentId: 10212, club: "layer7" },
-				{ ...defaultObj, studentId: 10201, club: "unifox" },
-				{ ...defaultObj, studentId: 10101, club: "unifox" },
-				{ ...defaultObj, studentId: 10105, club: "unifox" },
+				{ ...defaultObj, studentId: 10216, club: "EMOTION" },
+				{ ...defaultObj, studentId: 10212, club: "LAYER7" },
+				{ ...defaultObj, studentId: 10201, club: "UNIFOX" },
+				{ ...defaultObj, studentId: 10101, club: "UNIFOX" },
+				{ ...defaultObj, studentId: 10105, club: "UNIFOX" },
 			]
 			const { insertedIds } = await db.collection("form").insertMany(inputData)
 			for (const key in insertedIds) {
@@ -411,15 +412,15 @@ describe("Form Service", () => {
 					.send(JSON.stringify({ query }))
 					.expect(200)
 				deepEqual(body.data.getLiveFormStatus[0], {
-					club: "unifox",
+					club: "UNIFOX",
 					formCount: 3,
 				})
 				deepEqual(body.data.getLiveFormStatus[1], {
-					club: "emotion",
+					club: "EMOTION",
 					formCount: 2,
 				})
 				deepEqual(body.data.getLiveFormStatus[2], {
-					club: "layer7",
+					club: "LAYER7",
 					formCount: 1,
 				})
 			})

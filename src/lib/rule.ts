@@ -5,7 +5,7 @@ export const isValidGetFormByClub = rule()(async (parent: void, args: { club: st
 	const id = context.user?.id
 	const role = context.user?.role
 	let ret = false
-	if (role === "teacher" || role === args.club) {
+	if (role === "TEACHER" || role === args.club) {
 		ret = (await context.db.collection("user").findOne({ id: id })) !== null
 	}
 	return ret || "권한이 없습니다"

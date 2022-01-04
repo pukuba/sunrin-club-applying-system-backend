@@ -26,30 +26,6 @@ export const StudentID = new GraphQLScalarType({
 	},
 })
 
-const isValidClub = (value: any) => {
-	const regex = /^(nefus|layer7|unifox|teamlog|emotion)$/
-	if (typeof value !== "string") {
-		throw new UserInputError("동아리는 string 타입이여야 합니다")
-	}
-	if (regex.test(value) === false) {
-		throw new UserInputError("동아리 이름은 nefus, layer7, unifox, teamlog, emotion 중 하나입니다")
-	}
-	return value
-}
-
-export const Club = new GraphQLScalarType({
-	name: "Club",
-	description: "동아리 eg) nefus, layer7, unifox, teamlog, emotion",
-	parseValue: isValidClub,
-	serialize: isValidClub,
-	parseLiteral(ast) {
-		if (ast.kind === Kind.STRING) {
-			return isValidClub(ast.value)
-		}
-		throw new UserInputError("동아리는 string 타입이여야 합니다")
-	},
-})
-
 const isValidIP = (value: any) => {
 	if (typeof value !== "string") {
 		throw new UserInputError("IP는 string 타입이여야 합니다")
