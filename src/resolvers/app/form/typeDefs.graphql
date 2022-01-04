@@ -1,0 +1,35 @@
+type Form {
+    club: Club!
+    lastUpdatedAt: DateTime!
+    question: [QuestionList!]!    
+}
+
+type QuestionList {
+    question: String!
+    length: UnsignedInt!
+}
+
+input UpdateFormInput {
+    question: String!
+    length: UnsignedInt!
+}
+
+extend type Mutation {
+    upsertForm(
+        input: UpdateFormInput!
+    ): Form!
+}
+
+type InvalidFormError implements Error {
+    message: String!
+    path: String!
+    suggestion: String!
+}
+
+union GetFormByClubResult = InvalidFormError | Form
+
+extend type Query {
+    getFormByClub(
+        club: Club!
+    ): GetFormByClubResult!
+}
