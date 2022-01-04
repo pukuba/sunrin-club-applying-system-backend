@@ -41,10 +41,9 @@ const getLogData = (response: any): any => {
 			const date = new Date(Date.now() + 1000 * 60 * 60 * 9).toISOString()
 			return {
 				tracing: {
-					message: response[key].message,
+					...response[key],
 					status: response["path"] && response["suggestion"] ? false : true,
 					date,
-					role: response[key].role,
 				},
 			}
 		}

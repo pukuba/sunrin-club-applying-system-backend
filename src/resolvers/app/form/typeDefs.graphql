@@ -1,6 +1,7 @@
 type Form {
     club: Club!
-    lastUpdatedAt: DateTime!
+    introduce: String!
+    latestUpdatedAt: DateTime!
     question: [QuestionList!]!    
 }
 
@@ -9,14 +10,19 @@ type QuestionList {
     length: UnsignedInt!
 }
 
-input UpdateFormInput {
+input QuestionListInput {
     question: String!
-    length: UnsignedInt!
+    length: UnsignedInt! 
+}
+
+input UpsertFormInput {
+    introduce: String
+    question: [QuestionListInput!]
 }
 
 extend type Mutation {
     upsertForm(
-        input: [UpdateFormInput!]!
+        input: UpsertFormInput!
     ): Form!
 }
 

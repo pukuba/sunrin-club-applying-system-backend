@@ -260,12 +260,29 @@ export type File = {
   mimetype: Scalars['String'];
 };
 
+export type Form = {
+  __typename?: 'Form';
+  club: Club;
+  introduce: Scalars['String'];
+  lastUpdatedAt: Scalars['DateTime'];
+  question: Array<QuestionList>;
+};
+
+export type GetFormByClubResult = Form | InvalidFormError;
+
 export type HealthCheckInput = {
   data: Scalars['data_String_NotNull_pattern_ping'];
 };
 
 export type InvalidAccountError = Error & {
   __typename?: 'InvalidAccountError';
+  message: Scalars['String'];
+  path: Scalars['String'];
+  suggestion: Scalars['String'];
+};
+
+export type InvalidFormError = Error & {
+  __typename?: 'InvalidFormError';
   message: Scalars['String'];
   path: Scalars['String'];
   suggestion: Scalars['String'];
@@ -306,6 +323,7 @@ export type Mutation = {
   healthCheck: Scalars['String'];
   login: LoginResult;
   sendMessage: SendMessageResult;
+  upsertForm: Form;
 };
 
 
@@ -328,6 +346,11 @@ export type MutationSendMessageArgs = {
   input: SendMessageInput;
 };
 
+
+export type MutationUpsertFormArgs = {
+  input: UpsertFormInput;
+};
+
 export type OffsetPageInfo = {
   __typename?: 'OffsetPageInfo';
   maxPage: Scalars['UnsignedInt'];
@@ -338,6 +361,7 @@ export type Query = {
   __typename?: 'Query';
   getAnswerByClub: AnswerConnection;
   getAnswerByStudentId: AnswerConnection;
+  getFormByClub: GetFormByClubResult;
   getLiveAnswerStatus: Array<AnswerStatus>;
   getLogByKeyword: LogConnection;
   healthLive: Scalars['DateTime'];
@@ -358,10 +382,26 @@ export type QueryGetAnswerByStudentIdArgs = {
 };
 
 
+export type QueryGetFormByClubArgs = {
+  club: Club;
+};
+
+
 export type QueryGetLogByKeywordArgs = {
   keyword?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['UnsignedInt']>;
   page: Scalars['UnsignedInt'];
+};
+
+export type QuestionList = {
+  __typename?: 'QuestionList';
+  length: Scalars['UnsignedInt'];
+  question: Scalars['String'];
+};
+
+export type QuestionListInput = {
+  length: Scalars['UnsignedInt'];
+  question: Scalars['String'];
 };
 
 export enum Role {
@@ -405,6 +445,11 @@ export type StudentInfo = {
   name: Scalars['name_String_NotNull_maxLength_5'];
   phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
   studentId: Scalars['StudentID'];
+};
+
+export type UpsertFormInput = {
+  introduce?: InputMaybe<Scalars['String']>;
+  question?: InputMaybe<Array<QuestionListInput>>;
 };
 
 export type User = {
@@ -503,9 +548,11 @@ export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Duration: ResolverTypeWrapper<Scalars['Duration']>;
   EmailAddress: ResolverTypeWrapper<Scalars['EmailAddress']>;
-  Error: ResolversTypes['CreateAnswerInvalidInputError'] | ResolversTypes['InvalidAccountError'] | ResolversTypes['RateLimitError'] | ResolversTypes['SendMessageInvalidInputError'];
+  Error: ResolversTypes['CreateAnswerInvalidInputError'] | ResolversTypes['InvalidAccountError'] | ResolversTypes['InvalidFormError'] | ResolversTypes['RateLimitError'] | ResolversTypes['SendMessageInvalidInputError'];
   File: ResolverTypeWrapper<File>;
+  Form: ResolverTypeWrapper<Form>;
   GUID: ResolverTypeWrapper<Scalars['GUID']>;
+  GetFormByClubResult: ResolversTypes['Form'] | ResolversTypes['InvalidFormError'];
   HSL: ResolverTypeWrapper<Scalars['HSL']>;
   HSLA: ResolverTypeWrapper<Scalars['HSLA']>;
   HealthCheckInput: HealthCheckInput;
@@ -518,6 +565,7 @@ export type ResolversTypes = {
   ISBN: ResolverTypeWrapper<Scalars['ISBN']>;
   ISO8601Duration: ResolverTypeWrapper<Scalars['ISO8601Duration']>;
   InvalidAccountError: ResolverTypeWrapper<InvalidAccountError>;
+  InvalidFormError: ResolverTypeWrapper<InvalidFormError>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
   JWT: ResolverTypeWrapper<Scalars['JWT']>;
@@ -549,6 +597,8 @@ export type ResolversTypes = {
   PositiveInt: ResolverTypeWrapper<Scalars['PositiveInt']>;
   PostalCode: ResolverTypeWrapper<Scalars['PostalCode']>;
   Query: ResolverTypeWrapper<{}>;
+  QuestionList: ResolverTypeWrapper<QuestionList>;
+  QuestionListInput: QuestionListInput;
   RGB: ResolverTypeWrapper<Scalars['RGB']>;
   RGBA: ResolverTypeWrapper<Scalars['RGBA']>;
   ROLE: Role;
@@ -568,6 +618,7 @@ export type ResolversTypes = {
   UnsignedFloat: ResolverTypeWrapper<Scalars['UnsignedFloat']>;
   UnsignedInt: ResolverTypeWrapper<Scalars['UnsignedInt']>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
+  UpsertFormInput: UpsertFormInput;
   User: ResolverTypeWrapper<User>;
   UtcOffset: ResolverTypeWrapper<Scalars['UtcOffset']>;
   Void: ResolverTypeWrapper<Scalars['Void']>;
@@ -603,9 +654,11 @@ export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
   Duration: Scalars['Duration'];
   EmailAddress: Scalars['EmailAddress'];
-  Error: ResolversParentTypes['CreateAnswerInvalidInputError'] | ResolversParentTypes['InvalidAccountError'] | ResolversParentTypes['RateLimitError'] | ResolversParentTypes['SendMessageInvalidInputError'];
+  Error: ResolversParentTypes['CreateAnswerInvalidInputError'] | ResolversParentTypes['InvalidAccountError'] | ResolversParentTypes['InvalidFormError'] | ResolversParentTypes['RateLimitError'] | ResolversParentTypes['SendMessageInvalidInputError'];
   File: File;
+  Form: Form;
   GUID: Scalars['GUID'];
+  GetFormByClubResult: ResolversParentTypes['Form'] | ResolversParentTypes['InvalidFormError'];
   HSL: Scalars['HSL'];
   HSLA: Scalars['HSLA'];
   HealthCheckInput: HealthCheckInput;
@@ -618,6 +671,7 @@ export type ResolversParentTypes = {
   ISBN: Scalars['ISBN'];
   ISO8601Duration: Scalars['ISO8601Duration'];
   InvalidAccountError: InvalidAccountError;
+  InvalidFormError: InvalidFormError;
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
   JWT: Scalars['JWT'];
@@ -648,6 +702,8 @@ export type ResolversParentTypes = {
   PositiveInt: Scalars['PositiveInt'];
   PostalCode: Scalars['PostalCode'];
   Query: {};
+  QuestionList: QuestionList;
+  QuestionListInput: QuestionListInput;
   RGB: Scalars['RGB'];
   RGBA: Scalars['RGBA'];
   RateLimitError: RateLimitError;
@@ -666,6 +722,7 @@ export type ResolversParentTypes = {
   UnsignedFloat: Scalars['UnsignedFloat'];
   UnsignedInt: Scalars['UnsignedInt'];
   Upload: Scalars['Upload'];
+  UpsertFormInput: UpsertFormInput;
   User: User;
   UtcOffset: Scalars['UtcOffset'];
   Void: Scalars['Void'];
@@ -846,7 +903,7 @@ export interface EmailAddressScalarConfig extends GraphQLScalarTypeConfig<Resolv
 }
 
 export type ErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']> = {
-  __resolveType: TypeResolveFn<'CreateAnswerInvalidInputError' | 'InvalidAccountError' | 'RateLimitError' | 'SendMessageInvalidInputError', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'CreateAnswerInvalidInputError' | 'InvalidAccountError' | 'InvalidFormError' | 'RateLimitError' | 'SendMessageInvalidInputError', ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -859,9 +916,21 @@ export type FileResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
+  club?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
+  introduce?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastUpdatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  question?: Resolver<Array<ResolversTypes['QuestionList']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface GuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['GUID'], any> {
   name: 'GUID';
 }
+
+export type GetFormByClubResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['GetFormByClubResult'] = ResolversParentTypes['GetFormByClubResult']> = {
+  __resolveType: TypeResolveFn<'Form' | 'InvalidFormError', ParentType, ContextType>;
+};
 
 export interface HslScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['HSL'], any> {
   name: 'HSL';
@@ -904,6 +973,13 @@ export interface Iso8601DurationScalarConfig extends GraphQLScalarTypeConfig<Res
 }
 
 export type InvalidAccountErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['InvalidAccountError'] = ResolversParentTypes['InvalidAccountError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InvalidFormErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['InvalidFormError'] = ResolversParentTypes['InvalidFormError']> = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -976,6 +1052,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
   login?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
   sendMessage?: Resolver<ResolversTypes['SendMessageResult'], ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'input'>>;
+  upsertForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationUpsertFormArgs, 'input'>>;
 };
 
 export interface NegativeFloatScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['NegativeFloat'], any> {
@@ -1039,9 +1116,16 @@ export interface PostalCodeScalarConfig extends GraphQLScalarTypeConfig<Resolver
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getAnswerByClub?: Resolver<ResolversTypes['AnswerConnection'], ParentType, ContextType, RequireFields<QueryGetAnswerByClubArgs, 'club' | 'limit'>>;
   getAnswerByStudentId?: Resolver<ResolversTypes['AnswerConnection'], ParentType, ContextType, RequireFields<QueryGetAnswerByStudentIdArgs, 'limit' | 'studentId'>>;
+  getFormByClub?: Resolver<ResolversTypes['GetFormByClubResult'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club'>>;
   getLiveAnswerStatus?: Resolver<Array<ResolversTypes['AnswerStatus']>, ParentType, ContextType>;
   getLogByKeyword?: Resolver<ResolversTypes['LogConnection'], ParentType, ContextType, RequireFields<QueryGetLogByKeywordArgs, 'keyword' | 'limit' | 'page'>>;
   healthLive?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+};
+
+export type QuestionListResolvers<ContextType = any, ParentType extends ResolversParentTypes['QuestionList'] = ResolversParentTypes['QuestionList']> = {
+  length?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
+  question?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface RgbScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RGB'], any> {
@@ -1184,7 +1268,9 @@ export type Resolvers<ContextType = any> = {
   EmailAddress?: GraphQLScalarType;
   Error?: ErrorResolvers<ContextType>;
   File?: FileResolvers<ContextType>;
+  Form?: FormResolvers<ContextType>;
   GUID?: GraphQLScalarType;
+  GetFormByClubResult?: GetFormByClubResultResolvers<ContextType>;
   HSL?: GraphQLScalarType;
   HSLA?: GraphQLScalarType;
   HexColorCode?: GraphQLScalarType;
@@ -1196,6 +1282,7 @@ export type Resolvers<ContextType = any> = {
   ISBN?: GraphQLScalarType;
   ISO8601Duration?: GraphQLScalarType;
   InvalidAccountError?: InvalidAccountErrorResolvers<ContextType>;
+  InvalidFormError?: InvalidFormErrorResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   JWT?: GraphQLScalarType;
@@ -1225,6 +1312,7 @@ export type Resolvers<ContextType = any> = {
   PositiveInt?: GraphQLScalarType;
   PostalCode?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
+  QuestionList?: QuestionListResolvers<ContextType>;
   RGB?: GraphQLScalarType;
   RGBA?: GraphQLScalarType;
   RateLimitError?: RateLimitErrorResolvers<ContextType>;
