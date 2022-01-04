@@ -1,6 +1,12 @@
 import { deepStrictEqual as deepEqual } from "assert"
 import request from "supertest"
-import { Answer, AnswerConnection, RateLimitError, CreateAnswerInvalidInputError } from "config/models"
+import {
+	Answer,
+	AnswerConnection,
+	RateLimitError,
+	CreateAnswerInvalidInputError,
+	InvalidFormError,
+} from "config/models"
 import appPromise from "app"
 import { Server } from "http"
 import { mongoDB, redis } from "config"
@@ -15,22 +21,40 @@ describe("Answer Service", () => {
 		emotion: string
 		invalid: string
 	}
+	const formIds: string[] = []
 	const answerIds: string[] = []
 	const deletedUserIds: string[] = []
 	before(async () => {
 		app = await appPromise
 		const db = (await mongoDB.get()) as Db
-		const obj = [
+		const users = [
 			{ id: "teacher11", password: "test", role: "TEACHER" },
 			{ id: "emotion01", password: "test", role: "EMOTION" },
 		]
-		await db.collection("user").insertMany(obj)
-		obj.forEach(x => deletedUserIds.push(x.id))
+		await db.collection("user").insertMany(users)
+		users.forEach(x => deletedUserIds.push(x.id))
 		token = {
 			teacher: jwt.sign({ role: "TEACHER", id: "teacher11" }, env.JWT_SECRET),
 			emotion: jwt.sign({ role: "EMOTION", id: "emotion01" }, env.JWT_SECRET),
 			invalid: jwt.sign({ role: "TEACHER", id: "01010100" }, env.JWT_SECRET),
 		}
+
+		const form = [
+			{
+				club: "EMOTION",
+				introduce: "이모션입니다.",
+				latestUpdatedAt: new Date(Date.now() + 1000 * 60 * 60 * 9).toISOString(),
+				question: [
+					{ message: "질문 1", length: 400 },
+					{ message: "질문 2", length: 400 },
+					{ message: "질문 3", length: 400 },
+					{ message: "질문 4", length: 400 },
+					{ message: "질문 5", length: 400 },
+				],
+			},
+		]
+		const { insertedIds } = await db.collection("form").insertMany(form)
+		for (const key in insertedIds) formIds.push(insertedIds[key])
 	})
 
 	describe("Mutation createAnswer", () => {
@@ -168,6 +192,30 @@ describe("Answer Service", () => {
 					body.errors[0].message,
 					'Variable "$input" got invalid value "emo" at "input.club"; Value "emo" does not exist in "Club" enum.'
 				)
+			})
+
+			it("Failed request (form is not yet) / Should be return InvalidFormError", async () => {
+				const input = {
+					studentId: 10217,
+					name: "남승원",
+					club: "TEAMLOG",
+					answerList: ["", "", "", "", ""],
+					portfolioURL: "https://www.naver.com/",
+					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
+					phoneNumber: "01000000000",
+				}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				const data = body.data.createAnswer as InvalidFormError
+				deepEqual(data, {
+					message: "teamlog 동아리의 지원 폼 양식이 아직 올바르지 않습니다",
+					path: "createAnswer",
+					suggestion: "teamlog 동아리에 문의해주세요",
+					__typename: "InvalidFormError",
+				})
 			})
 
 			it("Failed request (too many requests) / Should be return errors", async () => {
@@ -413,6 +461,7 @@ describe("Answer Service", () => {
 		await Promise.all([
 			db.collection("answer").deleteMany({ _id: { $in: answerIds.map(id => new ObjectID(id)) } }),
 			db.collection("user").deleteMany({ id: { $in: deletedUserIds } }),
+			db.collection("form").deleteMany({ _id: { $in: formIds.map(id => new ObjectID(id)) } }),
 		])
 	})
 })

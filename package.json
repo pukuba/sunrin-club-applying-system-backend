@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "export NODE_ENV=test; yarn lint && NODE_PATH=src/ mocha --require ts-node/register --timeout 100000 src/**/test.ts --exit --files",
-    "test:latest": "export NODE_ENV=test; yarn lint && NODE_PATH=src/ mocha --require ts-node/register --timeout 100000 src/**/form/test.ts --exit --files",
+    "test:latest": "export NODE_ENV=test; yarn lint && NODE_PATH=src/ mocha --require ts-node/register --timeout 100000 src/**/answer/test.ts --exit --files",
     "coverage": "nyc --reporter=html --reporter=text --reporter=lcov yarn test",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov -t ${CODECOV_TOKEN}",
     "lint": "eslint '**/*.ts' --quiet",

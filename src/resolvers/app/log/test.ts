@@ -58,19 +58,19 @@ describe("Auth Service", () => {
 					.expect(200)
 				const data = body.data.getLogByKeyword as LogConnection
 				deepEqual(data.__typename, "LogConnection")
-				deepEqual(data.totalCount, 4)
-				deepEqual(data.edges[0], {
+				deepEqual(data.totalCount, 6)
+				deepEqual(data.edges[2], {
 					message: "emotion 동아리 지원서 제출 실패 (학번 : 10217 / 이름 : 남승원) - 잘못된 형식",
 					status: false,
 					role: "EMOTION",
 					ip: "::ffff:127.0.0.1",
-					date: data.edges[0].date,
-					logId: data.edges[0].logId,
+					date: data.edges[2].date,
+					logId: data.edges[2].logId,
 				})
-				deepEqual(data.edges[3], {
+				deepEqual(data.edges[5], {
 					message: "emotion 동아리 지원서 제출 성공 (학번 : 10217 / 이름 : 남승원)",
-					date: data.edges[3].date,
-					logId: data.edges[3].logId,
+					date: data.edges[5].date,
+					logId: data.edges[5].logId,
 					status: true,
 					role: "EMOTION",
 					ip: "::ffff:127.0.0.1",

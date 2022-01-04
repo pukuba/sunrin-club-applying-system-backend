@@ -41,7 +41,7 @@ type RateLimitError implements Error {
     afterTry: UnsignedInt!
 }
 
-union CreateAnswerResult = Answer | CreateAnswerInvalidInputError | RateLimitError
+union CreateAnswerResult = Answer | InvalidFormError | CreateAnswerInvalidInputError | RateLimitError
 
 extend type Mutation {
 
