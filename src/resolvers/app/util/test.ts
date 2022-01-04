@@ -18,12 +18,12 @@ describe("Util Service", () => {
 	before(async () => {
 		app = await appPromise
 		const db = (await mongoDB.get()) as Db
-		const obj = [{ id: "teacher11", password: "test", role: "teacher" }]
+		const obj = [{ id: "teacher11", password: "test", role: "TEACHER" }]
 		await db.collection("user").insertMany(obj)
 		obj.forEach(x => deletedUserIds.push(x.id))
 		token = {
-			teacher: jwt.sign({ role: "teacher", id: "teacher11" }, env.JWT_SECRET),
-			invalid: jwt.sign({ role: "teacher", id: "01010100" }, env.JWT_SECRET),
+			teacher: jwt.sign({ role: "TEACHER", id: "teacher11" }, env.JWT_SECRET),
+			invalid: jwt.sign({ role: "TEACHER", id: "01010100" }, env.JWT_SECRET),
 		}
 	})
 

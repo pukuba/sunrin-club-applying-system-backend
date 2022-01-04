@@ -22,7 +22,9 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 			path: "createForm",
 			suggestion,
 			tracing: {
-				message: `${args.input.club} 동아리 지원서 제출 실패 (학번 : ${args.input.studentId} / 이름 : ${args.input.name}) - 잘못된 형식`,
+				message: `${args.input.club.toLowerCase()} 동아리 지원서 제출 실패 (학번 : ${
+					args.input.studentId
+				} / 이름 : ${args.input.name}) - 잘못된 형식`,
 				role: args.input.club,
 			},
 		}
@@ -41,7 +43,9 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 		...document,
 		formId,
 		tracing: {
-			message: `${args.input.club} 동아리 지원서 제출 성공 (학번 : ${args.input.studentId} / 이름 : ${args.input.name})`,
+			message: `${args.input.club.toLowerCase()} 동아리 지원서 제출 성공 (학번 : ${
+				args.input.studentId
+			} / 이름 : ${args.input.name})`,
 			role: args.input.club,
 		},
 	}

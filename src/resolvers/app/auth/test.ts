@@ -13,9 +13,9 @@ describe("Auth Service", () => {
 		app = await appPromise
 		const db = (await mongoDB.get()) as Db
 		const obj = [
-			{ id: "teamlog77", password: "test", role: "teamlog" },
-			{ id: "teacher11", password: "test", role: "teacher" },
-			{ id: "emotion01", password: "test", role: "emotion" },
+			{ id: "teamlog77", password: "test", role: "TEAMLOG" },
+			{ id: "teacher11", password: "test", role: "TEACHER" },
+			{ id: "emotion01", password: "test", role: "EMOTION" },
 		]
 		await db.collection("user").insertMany(obj)
 		obj.forEach(x => deletedIds.push(x.id))
@@ -50,7 +50,7 @@ describe("Auth Service", () => {
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
 				const { role } = body.data.login as User
-				deepEqual(role, "teamlog")
+				deepEqual(role, "TEAMLOG")
 			})
 
 			it("Successful request (teacher11 auccount) / Should be return User", async () => {
@@ -64,7 +64,7 @@ describe("Auth Service", () => {
 					.send(JSON.stringify({ query, variables: { input } }))
 					.expect(200)
 				const { role } = body.data.login as User
-				deepEqual(role, "teacher")
+				deepEqual(role, "TEACHER")
 			})
 		})
 

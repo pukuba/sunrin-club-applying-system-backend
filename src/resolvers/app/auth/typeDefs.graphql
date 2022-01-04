@@ -9,9 +9,18 @@ input LoginInput {
     password: String! @constraint(maxLength: 30)
 }
 
+enum ROLE {
+    UNIFOX
+    LAYER7
+    EMOTION
+    TEAMLOG
+    NEFUS
+    TEACHER
+}
+
 type User {
     # Club or Teacher
-    role: String! 
+    role: ROLE! 
     # Bearer {Token} 과 같은 형태로 Authorization 헤더에 넣어 사용합니다 
     token: JWT!
 }
