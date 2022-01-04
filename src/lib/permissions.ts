@@ -1,13 +1,14 @@
 import { shield } from "graphql-shield"
-import { isValidUser, isValidGetAnswerByClub } from "./rule"
+import { isValidUser, isArgsClubEqualRole } from "./rule"
 
 export const permissions = shield(
 	{
 		Mutation: {
 			sendMessage: isValidUser,
+			upsertForm: isValidUser,
 		},
 		Query: {
-			getAnswerByClub: isValidGetAnswerByClub,
+			getAnswerByClub: isArgsClubEqualRole,
 			getAnswerByStudentId: isValidUser,
 			getLogByKeyword: isValidUser,
 		},

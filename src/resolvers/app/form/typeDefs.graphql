@@ -1,22 +1,23 @@
 type Form {
     club: Club!
-    introduce: String!
+    introduce: String! @constraint(maxLength: 400)
+    formId: ObjectID!
     latestUpdatedAt: DateTime!
     question: [QuestionList!]!    
 }
 
 type QuestionList {
-    question: String!
+    message: String! @constraint(maxLength: 400)
     length: UnsignedInt!
 }
 
 input QuestionListInput {
-    question: String!
+    message: String! @constraint(maxLength: 400)
     length: UnsignedInt! 
 }
 
 input UpsertFormInput {
-    introduce: String
+    introduce: String @constraint(maxLength: 400)
     question: [QuestionListInput!]
 }
 

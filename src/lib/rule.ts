@@ -1,7 +1,7 @@
 import { Context } from "config"
 import { rule } from "graphql-shield"
 
-export const isValidGetAnswerByClub = rule()(async (parent: void, args: { club: string }, context: Context) => {
+export const isArgsClubEqualRole = rule()(async (parent: void, args: { club: string }, context: Context) => {
 	const id = context.user?.id
 	const role = context.user?.role
 	let ret = false

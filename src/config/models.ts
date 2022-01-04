@@ -164,7 +164,10 @@ export type Scalars = {
   Void: any;
   data_String_NotNull_pattern_ping: any;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: any;
+  introduce_String_NotNull_maxLength_400: any;
+  introduce_String_maxLength_400: any;
   message_String_NotNull_maxLength_80: any;
+  message_String_NotNull_maxLength_400: any;
   name_String_NotNull_maxLength_5: any;
   password_String_NotNull_maxLength_30: any;
   phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098: any;
@@ -263,8 +266,9 @@ export type File = {
 export type Form = {
   __typename?: 'Form';
   club: Club;
-  introduce: Scalars['String'];
-  lastUpdatedAt: Scalars['DateTime'];
+  formId: Scalars['ObjectID'];
+  introduce: Scalars['introduce_String_NotNull_maxLength_400'];
+  latestUpdatedAt: Scalars['DateTime'];
   question: Array<QuestionList>;
 };
 
@@ -396,12 +400,12 @@ export type QueryGetLogByKeywordArgs = {
 export type QuestionList = {
   __typename?: 'QuestionList';
   length: Scalars['UnsignedInt'];
-  question: Scalars['String'];
+  message: Scalars['message_String_NotNull_maxLength_400'];
 };
 
 export type QuestionListInput = {
   length: Scalars['UnsignedInt'];
-  question: Scalars['String'];
+  message: Scalars['message_String_NotNull_maxLength_400'];
 };
 
 export enum Role {
@@ -448,7 +452,7 @@ export type StudentInfo = {
 };
 
 export type UpsertFormInput = {
-  introduce?: InputMaybe<Scalars['String']>;
+  introduce?: InputMaybe<Scalars['introduce_String_maxLength_400']>;
   question?: InputMaybe<Array<QuestionListInput>>;
 };
 
@@ -624,7 +628,10 @@ export type ResolversTypes = {
   Void: ResolverTypeWrapper<Scalars['Void']>;
   data_String_NotNull_pattern_ping: ResolverTypeWrapper<Scalars['data_String_NotNull_pattern_ping']>;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: ResolverTypeWrapper<Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher']>;
+  introduce_String_NotNull_maxLength_400: ResolverTypeWrapper<Scalars['introduce_String_NotNull_maxLength_400']>;
+  introduce_String_maxLength_400: ResolverTypeWrapper<Scalars['introduce_String_maxLength_400']>;
   message_String_NotNull_maxLength_80: ResolverTypeWrapper<Scalars['message_String_NotNull_maxLength_80']>;
+  message_String_NotNull_maxLength_400: ResolverTypeWrapper<Scalars['message_String_NotNull_maxLength_400']>;
   name_String_NotNull_maxLength_5: ResolverTypeWrapper<Scalars['name_String_NotNull_maxLength_5']>;
   password_String_NotNull_maxLength_30: ResolverTypeWrapper<Scalars['password_String_NotNull_maxLength_30']>;
   phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098: ResolverTypeWrapper<Scalars['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098']>;
@@ -728,7 +735,10 @@ export type ResolversParentTypes = {
   Void: Scalars['Void'];
   data_String_NotNull_pattern_ping: Scalars['data_String_NotNull_pattern_ping'];
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher: Scalars['id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher'];
+  introduce_String_NotNull_maxLength_400: Scalars['introduce_String_NotNull_maxLength_400'];
+  introduce_String_maxLength_400: Scalars['introduce_String_maxLength_400'];
   message_String_NotNull_maxLength_80: Scalars['message_String_NotNull_maxLength_80'];
+  message_String_NotNull_maxLength_400: Scalars['message_String_NotNull_maxLength_400'];
   name_String_NotNull_maxLength_5: Scalars['name_String_NotNull_maxLength_5'];
   password_String_NotNull_maxLength_30: Scalars['password_String_NotNull_maxLength_30'];
   phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098: Scalars['phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098'];
@@ -918,8 +928,9 @@ export type FileResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
   club?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
-  introduce?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  lastUpdatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  formId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
+  introduce?: Resolver<ResolversTypes['introduce_String_NotNull_maxLength_400'], ParentType, ContextType>;
+  latestUpdatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   question?: Resolver<Array<ResolversTypes['QuestionList']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1124,7 +1135,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type QuestionListResolvers<ContextType = any, ParentType extends ResolversParentTypes['QuestionList'] = ResolversParentTypes['QuestionList']> = {
   length?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
-  question?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['message_String_NotNull_maxLength_400'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1230,8 +1241,20 @@ export interface Id_String_NotNull_Pattern_Unifoxlayer7teamlognefusemotionteache
   name: 'id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher';
 }
 
+export interface Introduce_String_NotNull_MaxLength_400ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['introduce_String_NotNull_maxLength_400'], any> {
+  name: 'introduce_String_NotNull_maxLength_400';
+}
+
+export interface Introduce_String_MaxLength_400ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['introduce_String_maxLength_400'], any> {
+  name: 'introduce_String_maxLength_400';
+}
+
 export interface Message_String_NotNull_MaxLength_80ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['message_String_NotNull_maxLength_80'], any> {
   name: 'message_String_NotNull_maxLength_80';
+}
+
+export interface Message_String_NotNull_MaxLength_400ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['message_String_NotNull_maxLength_400'], any> {
+  name: 'message_String_NotNull_maxLength_400';
 }
 
 export interface Name_String_NotNull_MaxLength_5ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['name_String_NotNull_maxLength_5'], any> {
@@ -1335,7 +1358,10 @@ export type Resolvers<ContextType = any> = {
   Void?: GraphQLScalarType;
   data_String_NotNull_pattern_ping?: GraphQLScalarType;
   id_String_NotNull_pattern_unifoxlayer7teamlognefusemotionteacher?: GraphQLScalarType;
+  introduce_String_NotNull_maxLength_400?: GraphQLScalarType;
+  introduce_String_maxLength_400?: GraphQLScalarType;
   message_String_NotNull_maxLength_80?: GraphQLScalarType;
+  message_String_NotNull_maxLength_400?: GraphQLScalarType;
   name_String_NotNull_maxLength_5?: GraphQLScalarType;
   password_String_NotNull_maxLength_30?: GraphQLScalarType;
   phoneNumberList_List_ListNotNull_String_NotNull_pattern_010098?: GraphQLScalarType;
