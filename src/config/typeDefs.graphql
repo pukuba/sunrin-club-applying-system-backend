@@ -15,6 +15,14 @@ enum CacheControlScope {
     PRIVATE
 }
 
+enum Club {
+    UNIFOX
+    LAYER7
+    EMOTION
+    NEFUS
+    TEAMLOG
+}
+
 directive @cacheControl(
     maxAge: Int
     scope: CacheControlScope

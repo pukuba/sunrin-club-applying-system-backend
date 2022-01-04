@@ -1,7 +1,7 @@
 import { Context } from "config"
-import { MutationCreateFormArgs } from "config/models"
+import { MutationCreateAnswerArgs } from "config/models"
 
-export const createForm = async (parent: void, args: MutationCreateFormArgs, context: Context) => {
+export const createAnswer = async (parent: void, args: MutationCreateAnswerArgs, context: Context) => {
 	const { otherURLs, portfolioURL, ...data } = args.input
 
 	const validForm = [400, 400, 400, 400, 400]
@@ -17,9 +17,9 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 				? "답변의 길이를 확인해주세요"
 				: "답변의 개수를 확인해주세요"
 		return {
-			__typename: "CreateFormInvalidInputError",
+			__typename: "CreateAnswerInvalidInputError",
 			message: "잘못된 형식의 요청입니다",
-			path: "createForm",
+			path: "createAnswer",
 			suggestion,
 			tracing: {
 				message: `${args.input.club.toLowerCase()} 동아리 지원서 제출 실패 (학번 : ${
@@ -37,11 +37,11 @@ export const createForm = async (parent: void, args: MutationCreateFormArgs, con
 		ip: context.ip,
 		date: new Date(Date.now() + 1000 * 60 * 60 * 9).toISOString(),
 	}
-	const { insertedId: formId } = await context.db.collection("form").insertOne(document)
+	const { insertedId: answerId } = await context.db.collection("answer").insertOne(document)
 	return {
-		__typename: "Form",
+		__typename: "Answer",
 		...document,
-		formId,
+		answerId,
 		tracing: {
 			message: `${args.input.club.toLowerCase()} 동아리 지원서 제출 성공 (학번 : ${
 				args.input.studentId

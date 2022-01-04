@@ -1,38 +1,24 @@
 scalar StudentID
 
-enum Club {
-    UNIFOX
-    LAYER7
-    EMOTION
-    NEFUS
-    TEAMLOG
-}
-
 interface StudentInfo {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
     phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
 }
 
-type Student implements StudentInfo {
-    studentId: StudentID!
-    name: String! @constraint(maxLength: 5)
-    phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
-}
-
-type Form implements StudentInfo {
+type Answer implements StudentInfo {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
     club: Club!
     answerList: [String]!
     portfolioURL: URL
     otherURLs: [URL]!
-    formId: ObjectID!
+    answerId: ObjectID!
     date: DateTime!
     phoneNumber: String! @constraint(pattern: "^010([0-9]{8})$")
 }
 
-input CreateFormInput {
+input CreateAnswerInput {
     studentId: StudentID!
     name: String! @constraint(maxLength: 5)
     club: Club!
@@ -42,7 +28,7 @@ input CreateFormInput {
     otherURLs: [URL]!
 }
 
-type CreateFormInvalidInputError implements Error {
+type CreateAnswerInvalidInputError implements Error {
     message: String!
     path: String!
     suggestion: String!
@@ -55,52 +41,48 @@ type RateLimitError implements Error {
     afterTry: UnsignedInt!
 }
 
-union CreateFormResult = Form | CreateFormInvalidInputError | RateLimitError
+union CreateAnswerResult = Answer | CreateAnswerInvalidInputError | RateLimitError
 
 extend type Mutation {
 
     # 동아리 신청서 전송
-    createForm(
-        input: CreateFormInput!
-    ): CreateFormResult! @ratelimit(ttl: 60, max: 10, key: "createForm", keyType: IP)
+    createAnswer(
+        input: CreateAnswerInput!
+    ): CreateAnswerResult! @ratelimit(ttl: 60, max: 10, key: "createAnswer", keyType: IP)
 }
 
 extend type Query {
 
-    # 동아리 신청자 명단 조회
-    getStudentByClub(
-        club: Club!
-    ): [Student!]! 
 
     # 동아리 지원 현황 가져오기
-    getLiveFormStatus: [FormStatus!]!
+    getLiveAnswerStatus: [AnswerStatus!]!
 
-    getFormByClub(
+    getAnswerByClub(
         club: Club!
         limit: UnsignedInt = 10
         cursor: ObjectID
-    ): FormConnection!
+    ): AnswerConnection!
 
      # 학번으로 신청서를 가져옵니다
-    getFormByStudentId(
+    getAnswerByStudentId(
         studentId: StudentID!
         limit: UnsignedInt = 10
         cursor: ObjectID
-    ): FormConnection!
+    ): AnswerConnection!
 }
 
-type FormStatus {
+type AnswerStatus {
     club: Club!
-    formCount: UnsignedInt!
+    answerCount: UnsignedInt!
 }
 
-type FormEdge {
-    node: Form!
+type AnswerEdge {
+    node: Answer!
     cursor: ObjectID!
 }
 
-type FormConnection {
+type AnswerConnection {
     totalCount: UnsignedInt!
-    edges: [FormEdge!]!
+    edges: [AnswerEdge!]!
     pageInfo: CursorPageInfo!
 }

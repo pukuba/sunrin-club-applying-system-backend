@@ -1,8 +1,8 @@
 import { Context, ObjectID, RequiredContext } from "config"
 import { MongoQuery } from "./models"
-import { QueryGetFormByClubArgs, QueryGetFormByStudentIdArgs, QueryGetStudentByClubArgs } from "config/models"
+import { QueryGetAnswerByClubArgs, QueryGetAnswerByStudentIdArgs } from "config/models"
 
-export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, context: Context) => {
+export const getAnswerByClub = async (parent: void, args: QueryGetAnswerByClubArgs, context: Context) => {
 	const { limit = 10, cursor, club } = args
 	const { db } = context
 	const query: MongoQuery = [
@@ -19,8 +19,8 @@ export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, 
 		query[0].$match["_id"] = { $gt: new ObjectID(cursor) }
 	}
 	const [data, count] = await Promise.all([
-		db.collection("form").aggregate(query).toArray(),
-		db.collection("form").find({ club }).count(),
+		db.collection("answer").aggregate(query).toArray(),
+		db.collection("answer").find({ club }).count(),
 	])
 	return {
 		totalCount: count,
@@ -33,7 +33,11 @@ export const getFormByClub = async (parent: void, args: QueryGetFormByClubArgs, 
 	}
 }
 
-export const getFormByStudentId = async (parent: void, args: QueryGetFormByStudentIdArgs, context: RequiredContext) => {
+export const getAnswerByStudentId = async (
+	parent: void,
+	args: QueryGetAnswerByStudentIdArgs,
+	context: RequiredContext
+) => {
 	const { limit = 10, cursor, studentId } = args
 	const club = context.user.role
 	let options = {}
@@ -54,8 +58,8 @@ export const getFormByStudentId = async (parent: void, args: QueryGetFormByStude
 		query[0].$match["_id"] = { $gt: new ObjectID(cursor) }
 	}
 	const [data, count] = await Promise.all([
-		context.db.collection("form").aggregate(query).toArray(),
-		context.db.collection("form").find({ studentId }).count(),
+		context.db.collection("answer").aggregate(query).toArray(),
+		context.db.collection("answer").find({ studentId }).count(),
 	])
 	return {
 		totalCount: count,
@@ -68,35 +72,23 @@ export const getFormByStudentId = async (parent: void, args: QueryGetFormByStude
 	}
 }
 
-export const getStudentByClub = async (parent: void, args: QueryGetStudentByClubArgs, context: Context) => {
-	const option = { club: args.club }
-	const students = await context.db
-		.collection("form")
-		.aggregate([{ $match: option }, { $group: { _id: { studentId: "$studentId", name: "$name" } } }])
-		.toArray()
-	return students.map(x => {
-		return {
-			studentId: x._id.studentId,
-			name: x._id.name,
-		}
-	})
-}
-
-export const getLiveFormStatus = async (parent: void, args: void, context: Context) => {
+export const getLiveAnswerStatus = async (parent: void, args: void, context: Context) => {
 	const data = await context.db
-		.collection("form")
+		.collection("answer")
 		.aggregate([
 			{ $group: { _id: "$club", studentId: { $addToSet: "$studentId" } } },
 			{
 				$project: {
 					club: 1,
-					formCount: { $cond: { if: { $isArray: "$studentId" }, then: { $size: "$studentId" }, else: "NA" } },
+					answerCount: {
+						$cond: { if: { $isArray: "$studentId" }, then: { $size: "$studentId" }, else: "NA" },
+					},
 				},
 			},
-			{ $sort: { formCount: -1 } },
+			{ $sort: { answerCount: -1 } },
 		])
 		.toArray()
 	return data.map(x => {
-		return { club: x._id, formCount: x.formCount }
+		return { club: x._id, answerCount: x.answerCount }
 	})
 }

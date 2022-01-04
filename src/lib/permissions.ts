@@ -1,5 +1,5 @@
 import { shield } from "graphql-shield"
-import { isValidUser, isValidGetFormByClub } from "./rule"
+import { isValidUser, isValidGetAnswerByClub } from "./rule"
 
 export const permissions = shield(
 	{
@@ -7,9 +7,8 @@ export const permissions = shield(
 			sendMessage: isValidUser,
 		},
 		Query: {
-			getFormByClub: isValidGetFormByClub,
-			getFormByStudentId: isValidUser,
-			getStudentByClub: isValidGetFormByClub,
+			getAnswerByClub: isValidGetAnswerByClub,
+			getAnswerByStudentId: isValidUser,
 			getLogByKeyword: isValidUser,
 		},
 	},

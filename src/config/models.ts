@@ -176,6 +176,38 @@ export type AdditionalEntityFields = {
   type?: InputMaybe<Scalars['String']>;
 };
 
+export type Answer = StudentInfo & {
+  __typename?: 'Answer';
+  answerId: Scalars['ObjectID'];
+  answerList: Array<Maybe<Scalars['String']>>;
+  club: Club;
+  date: Scalars['DateTime'];
+  name: Scalars['name_String_NotNull_maxLength_5'];
+  otherURLs: Array<Maybe<Scalars['URL']>>;
+  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
+  portfolioURL?: Maybe<Scalars['URL']>;
+  studentId: Scalars['StudentID'];
+};
+
+export type AnswerConnection = {
+  __typename?: 'AnswerConnection';
+  edges: Array<AnswerEdge>;
+  pageInfo: CursorPageInfo;
+  totalCount: Scalars['UnsignedInt'];
+};
+
+export type AnswerEdge = {
+  __typename?: 'AnswerEdge';
+  cursor: Scalars['ObjectID'];
+  node: Answer;
+};
+
+export type AnswerStatus = {
+  __typename?: 'AnswerStatus';
+  answerCount: Scalars['UnsignedInt'];
+  club: Club;
+};
+
 export enum CacheControlScope {
   Private = 'PRIVATE',
   Public = 'PUBLIC'
@@ -189,7 +221,7 @@ export enum Club {
   Unifox = 'UNIFOX'
 }
 
-export type CreateFormInput = {
+export type CreateAnswerInput = {
   answerList: Array<Scalars['String']>;
   club: Club;
   name: Scalars['name_String_NotNull_maxLength_5'];
@@ -199,14 +231,14 @@ export type CreateFormInput = {
   studentId: Scalars['StudentID'];
 };
 
-export type CreateFormInvalidInputError = Error & {
-  __typename?: 'CreateFormInvalidInputError';
+export type CreateAnswerInvalidInputError = Error & {
+  __typename?: 'CreateAnswerInvalidInputError';
   message: Scalars['String'];
   path: Scalars['String'];
   suggestion: Scalars['String'];
 };
 
-export type CreateFormResult = CreateFormInvalidInputError | Form | RateLimitError;
+export type CreateAnswerResult = Answer | CreateAnswerInvalidInputError | RateLimitError;
 
 export type CursorPageInfo = {
   __typename?: 'CursorPageInfo';
@@ -226,38 +258,6 @@ export type File = {
   encoding: Scalars['String'];
   filename: Scalars['String'];
   mimetype: Scalars['String'];
-};
-
-export type Form = StudentInfo & {
-  __typename?: 'Form';
-  answerList: Array<Maybe<Scalars['String']>>;
-  club: Club;
-  date: Scalars['DateTime'];
-  formId: Scalars['ObjectID'];
-  name: Scalars['name_String_NotNull_maxLength_5'];
-  otherURLs: Array<Maybe<Scalars['URL']>>;
-  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
-  portfolioURL?: Maybe<Scalars['URL']>;
-  studentId: Scalars['StudentID'];
-};
-
-export type FormConnection = {
-  __typename?: 'FormConnection';
-  edges: Array<FormEdge>;
-  pageInfo: CursorPageInfo;
-  totalCount: Scalars['UnsignedInt'];
-};
-
-export type FormEdge = {
-  __typename?: 'FormEdge';
-  cursor: Scalars['ObjectID'];
-  node: Form;
-};
-
-export type FormStatus = {
-  __typename?: 'FormStatus';
-  club: Club;
-  formCount: Scalars['UnsignedInt'];
 };
 
 export type HealthCheckInput = {
@@ -282,7 +282,7 @@ export type Log = {
   ip: Scalars['IP'];
   logId: Scalars['ObjectID'];
   message: Scalars['String'];
-  role: Scalars['String'];
+  role: Club;
   status: Scalars['Boolean'];
 };
 
@@ -302,15 +302,15 @@ export type LoginResult = InvalidAccountError | User;
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createForm: CreateFormResult;
+  createAnswer: CreateAnswerResult;
   healthCheck: Scalars['String'];
   login: LoginResult;
   sendMessage: SendMessageResult;
 };
 
 
-export type MutationCreateFormArgs = {
-  input: CreateFormInput;
+export type MutationCreateAnswerArgs = {
+  input: CreateAnswerInput;
 };
 
 
@@ -336,23 +336,22 @@ export type OffsetPageInfo = {
 
 export type Query = {
   __typename?: 'Query';
-  getFormByClub: FormConnection;
-  getFormByStudentId: FormConnection;
-  getLiveFormStatus: Array<FormStatus>;
+  getAnswerByClub: AnswerConnection;
+  getAnswerByStudentId: AnswerConnection;
+  getLiveAnswerStatus: Array<AnswerStatus>;
   getLogByKeyword: LogConnection;
-  getStudentByClub: Array<Student>;
   healthLive: Scalars['DateTime'];
 };
 
 
-export type QueryGetFormByClubArgs = {
+export type QueryGetAnswerByClubArgs = {
   club: Club;
   cursor?: InputMaybe<Scalars['ObjectID']>;
   limit?: InputMaybe<Scalars['UnsignedInt']>;
 };
 
 
-export type QueryGetFormByStudentIdArgs = {
+export type QueryGetAnswerByStudentIdArgs = {
   cursor?: InputMaybe<Scalars['ObjectID']>;
   limit?: InputMaybe<Scalars['UnsignedInt']>;
   studentId: Scalars['StudentID'];
@@ -365,10 +364,14 @@ export type QueryGetLogByKeywordArgs = {
   page: Scalars['UnsignedInt'];
 };
 
-
-export type QueryGetStudentByClubArgs = {
-  club: Club;
-};
+export enum Role {
+  Emotion = 'EMOTION',
+  Layer7 = 'LAYER7',
+  Nefus = 'NEFUS',
+  Teacher = 'TEACHER',
+  Teamlog = 'TEAMLOG',
+  Unifox = 'UNIFOX'
+}
 
 export type RateLimitError = Error & {
   __typename?: 'RateLimitError';
@@ -398,13 +401,6 @@ export type SendMessagePayload = {
 
 export type SendMessageResult = RateLimitError | SendMessageInvalidInputError | SendMessagePayload;
 
-export type Student = StudentInfo & {
-  __typename?: 'Student';
-  name: Scalars['name_String_NotNull_maxLength_5'];
-  phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
-  studentId: Scalars['StudentID'];
-};
-
 export type StudentInfo = {
   name: Scalars['name_String_NotNull_maxLength_5'];
   phoneNumber: Scalars['phoneNumber_String_NotNull_pattern_010098'];
@@ -413,7 +409,7 @@ export type StudentInfo = {
 
 export type User = {
   __typename?: 'User';
-  role: Scalars['String'];
+  role: Role;
   token: Scalars['JWT'];
 };
 
@@ -488,13 +484,17 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AdditionalEntityFields: AdditionalEntityFields;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Answer: ResolverTypeWrapper<Answer>;
+  AnswerConnection: ResolverTypeWrapper<AnswerConnection>;
+  AnswerEdge: ResolverTypeWrapper<AnswerEdge>;
+  AnswerStatus: ResolverTypeWrapper<AnswerStatus>;
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
   Byte: ResolverTypeWrapper<Scalars['Byte']>;
   CacheControlScope: CacheControlScope;
   Club: Club;
-  CreateFormInput: CreateFormInput;
-  CreateFormInvalidInputError: ResolverTypeWrapper<CreateFormInvalidInputError>;
-  CreateFormResult: ResolversTypes['CreateFormInvalidInputError'] | ResolversTypes['Form'] | ResolversTypes['RateLimitError'];
+  CreateAnswerInput: CreateAnswerInput;
+  CreateAnswerInvalidInputError: ResolverTypeWrapper<CreateAnswerInvalidInputError>;
+  CreateAnswerResult: ResolversTypes['Answer'] | ResolversTypes['CreateAnswerInvalidInputError'] | ResolversTypes['RateLimitError'];
   Currency: ResolverTypeWrapper<Scalars['Currency']>;
   CursorPageInfo: ResolverTypeWrapper<CursorPageInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -503,12 +503,8 @@ export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Duration: ResolverTypeWrapper<Scalars['Duration']>;
   EmailAddress: ResolverTypeWrapper<Scalars['EmailAddress']>;
-  Error: ResolversTypes['CreateFormInvalidInputError'] | ResolversTypes['InvalidAccountError'] | ResolversTypes['RateLimitError'] | ResolversTypes['SendMessageInvalidInputError'];
+  Error: ResolversTypes['CreateAnswerInvalidInputError'] | ResolversTypes['InvalidAccountError'] | ResolversTypes['RateLimitError'] | ResolversTypes['SendMessageInvalidInputError'];
   File: ResolverTypeWrapper<File>;
-  Form: ResolverTypeWrapper<Form>;
-  FormConnection: ResolverTypeWrapper<FormConnection>;
-  FormEdge: ResolverTypeWrapper<FormEdge>;
-  FormStatus: ResolverTypeWrapper<FormStatus>;
   GUID: ResolverTypeWrapper<Scalars['GUID']>;
   HSL: ResolverTypeWrapper<Scalars['HSL']>;
   HSLA: ResolverTypeWrapper<Scalars['HSLA']>;
@@ -555,15 +551,15 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   RGB: ResolverTypeWrapper<Scalars['RGB']>;
   RGBA: ResolverTypeWrapper<Scalars['RGBA']>;
+  ROLE: Role;
   RateLimitError: ResolverTypeWrapper<RateLimitError>;
   SafeInt: ResolverTypeWrapper<Scalars['SafeInt']>;
   SendMessageInput: SendMessageInput;
   SendMessageInvalidInputError: ResolverTypeWrapper<SendMessageInvalidInputError>;
   SendMessagePayload: ResolverTypeWrapper<SendMessagePayload>;
   SendMessageResult: ResolversTypes['RateLimitError'] | ResolversTypes['SendMessageInvalidInputError'] | ResolversTypes['SendMessagePayload'];
-  Student: ResolverTypeWrapper<Student>;
   StudentID: ResolverTypeWrapper<Scalars['StudentID']>;
-  StudentInfo: ResolversTypes['Form'] | ResolversTypes['Student'];
+  StudentInfo: ResolversTypes['Answer'];
   Time: ResolverTypeWrapper<Scalars['Time']>;
   Timestamp: ResolverTypeWrapper<Scalars['Timestamp']>;
   URL: ResolverTypeWrapper<Scalars['URL']>;
@@ -590,11 +586,15 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AdditionalEntityFields: AdditionalEntityFields;
   String: Scalars['String'];
+  Answer: Answer;
+  AnswerConnection: AnswerConnection;
+  AnswerEdge: AnswerEdge;
+  AnswerStatus: AnswerStatus;
   BigInt: Scalars['BigInt'];
   Byte: Scalars['Byte'];
-  CreateFormInput: CreateFormInput;
-  CreateFormInvalidInputError: CreateFormInvalidInputError;
-  CreateFormResult: ResolversParentTypes['CreateFormInvalidInputError'] | ResolversParentTypes['Form'] | ResolversParentTypes['RateLimitError'];
+  CreateAnswerInput: CreateAnswerInput;
+  CreateAnswerInvalidInputError: CreateAnswerInvalidInputError;
+  CreateAnswerResult: ResolversParentTypes['Answer'] | ResolversParentTypes['CreateAnswerInvalidInputError'] | ResolversParentTypes['RateLimitError'];
   Currency: Scalars['Currency'];
   CursorPageInfo: CursorPageInfo;
   Boolean: Scalars['Boolean'];
@@ -603,12 +603,8 @@ export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
   Duration: Scalars['Duration'];
   EmailAddress: Scalars['EmailAddress'];
-  Error: ResolversParentTypes['CreateFormInvalidInputError'] | ResolversParentTypes['InvalidAccountError'] | ResolversParentTypes['RateLimitError'] | ResolversParentTypes['SendMessageInvalidInputError'];
+  Error: ResolversParentTypes['CreateAnswerInvalidInputError'] | ResolversParentTypes['InvalidAccountError'] | ResolversParentTypes['RateLimitError'] | ResolversParentTypes['SendMessageInvalidInputError'];
   File: File;
-  Form: Form;
-  FormConnection: FormConnection;
-  FormEdge: FormEdge;
-  FormStatus: FormStatus;
   GUID: Scalars['GUID'];
   HSL: Scalars['HSL'];
   HSLA: Scalars['HSLA'];
@@ -660,9 +656,8 @@ export type ResolversParentTypes = {
   SendMessageInvalidInputError: SendMessageInvalidInputError;
   SendMessagePayload: SendMessagePayload;
   SendMessageResult: ResolversParentTypes['RateLimitError'] | ResolversParentTypes['SendMessageInvalidInputError'] | ResolversParentTypes['SendMessagePayload'];
-  Student: Student;
   StudentID: Scalars['StudentID'];
-  StudentInfo: ResolversParentTypes['Form'] | ResolversParentTypes['Student'];
+  StudentInfo: ResolversParentTypes['Answer'];
   Time: Scalars['Time'];
   Timestamp: Scalars['Timestamp'];
   URL: Scalars['URL'];
@@ -768,6 +763,38 @@ export type RatelimitDirectiveArgs = {
 
 export type RatelimitDirectiveResolver<Result, Parent, ContextType = any, Args = RatelimitDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
+export type AnswerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Answer'] = ResolversParentTypes['Answer']> = {
+  answerId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
+  answerList?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
+  club?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
+  otherURLs?: Resolver<Array<Maybe<ResolversTypes['URL']>>, ParentType, ContextType>;
+  phoneNumber?: Resolver<ResolversTypes['phoneNumber_String_NotNull_pattern_010098'], ParentType, ContextType>;
+  portfolioURL?: Resolver<Maybe<ResolversTypes['URL']>, ParentType, ContextType>;
+  studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AnswerConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnswerConnection'] = ResolversParentTypes['AnswerConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['AnswerEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['CursorPageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AnswerEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnswerEdge'] = ResolversParentTypes['AnswerEdge']> = {
+  cursor?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Answer'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AnswerStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnswerStatus'] = ResolversParentTypes['AnswerStatus']> = {
+  answerCount?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
+  club?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['BigInt'], any> {
   name: 'BigInt';
 }
@@ -776,15 +803,15 @@ export interface ByteScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Byte';
 }
 
-export type CreateFormInvalidInputErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateFormInvalidInputError'] = ResolversParentTypes['CreateFormInvalidInputError']> = {
+export type CreateAnswerInvalidInputErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateAnswerInvalidInputError'] = ResolversParentTypes['CreateAnswerInvalidInputError']> = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CreateFormResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateFormResult'] = ResolversParentTypes['CreateFormResult']> = {
-  __resolveType: TypeResolveFn<'CreateFormInvalidInputError' | 'Form' | 'RateLimitError', ParentType, ContextType>;
+export type CreateAnswerResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateAnswerResult'] = ResolversParentTypes['CreateAnswerResult']> = {
+  __resolveType: TypeResolveFn<'Answer' | 'CreateAnswerInvalidInputError' | 'RateLimitError', ParentType, ContextType>;
 };
 
 export interface CurrencyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Currency'], any> {
@@ -819,7 +846,7 @@ export interface EmailAddressScalarConfig extends GraphQLScalarTypeConfig<Resolv
 }
 
 export type ErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']> = {
-  __resolveType: TypeResolveFn<'CreateFormInvalidInputError' | 'InvalidAccountError' | 'RateLimitError' | 'SendMessageInvalidInputError', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'CreateAnswerInvalidInputError' | 'InvalidAccountError' | 'RateLimitError' | 'SendMessageInvalidInputError', ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   suggestion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -829,38 +856,6 @@ export type FileResolvers<ContextType = any, ParentType extends ResolversParentT
   encoding?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   filename?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
-  answerList?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
-  club?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  formId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
-  otherURLs?: Resolver<Array<Maybe<ResolversTypes['URL']>>, ParentType, ContextType>;
-  phoneNumber?: Resolver<ResolversTypes['phoneNumber_String_NotNull_pattern_010098'], ParentType, ContextType>;
-  portfolioURL?: Resolver<Maybe<ResolversTypes['URL']>, ParentType, ContextType>;
-  studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type FormConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormConnection'] = ResolversParentTypes['FormConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['FormEdge']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['CursorPageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type FormEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormEdge'] = ResolversParentTypes['FormEdge']> = {
-  cursor?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['Form'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type FormStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormStatus'] = ResolversParentTypes['FormStatus']> = {
-  club?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
-  formCount?: Resolver<ResolversTypes['UnsignedInt'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -948,7 +943,7 @@ export type LogResolvers<ContextType = any, ParentType extends ResolversParentTy
   ip?: Resolver<ResolversTypes['IP'], ParentType, ContextType>;
   logId?: Resolver<ResolversTypes['ObjectID'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -977,7 +972,7 @@ export interface MacScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createForm?: Resolver<ResolversTypes['CreateFormResult'], ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'input'>>;
+  createAnswer?: Resolver<ResolversTypes['CreateAnswerResult'], ParentType, ContextType, RequireFields<MutationCreateAnswerArgs, 'input'>>;
   healthCheck?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationHealthCheckArgs, never>>;
   login?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
   sendMessage?: Resolver<ResolversTypes['SendMessageResult'], ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'input'>>;
@@ -1042,11 +1037,10 @@ export interface PostalCodeScalarConfig extends GraphQLScalarTypeConfig<Resolver
 }
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getFormByClub?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByClubArgs, 'club' | 'limit'>>;
-  getFormByStudentId?: Resolver<ResolversTypes['FormConnection'], ParentType, ContextType, RequireFields<QueryGetFormByStudentIdArgs, 'limit' | 'studentId'>>;
-  getLiveFormStatus?: Resolver<Array<ResolversTypes['FormStatus']>, ParentType, ContextType>;
+  getAnswerByClub?: Resolver<ResolversTypes['AnswerConnection'], ParentType, ContextType, RequireFields<QueryGetAnswerByClubArgs, 'club' | 'limit'>>;
+  getAnswerByStudentId?: Resolver<ResolversTypes['AnswerConnection'], ParentType, ContextType, RequireFields<QueryGetAnswerByStudentIdArgs, 'limit' | 'studentId'>>;
+  getLiveAnswerStatus?: Resolver<Array<ResolversTypes['AnswerStatus']>, ParentType, ContextType>;
   getLogByKeyword?: Resolver<ResolversTypes['LogConnection'], ParentType, ContextType, RequireFields<QueryGetLogByKeywordArgs, 'keyword' | 'limit' | 'page'>>;
-  getStudentByClub?: Resolver<Array<ResolversTypes['Student']>, ParentType, ContextType, RequireFields<QueryGetStudentByClubArgs, 'club'>>;
   healthLive?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
@@ -1087,19 +1081,12 @@ export type SendMessageResultResolvers<ContextType = any, ParentType extends Res
   __resolveType: TypeResolveFn<'RateLimitError' | 'SendMessageInvalidInputError' | 'SendMessagePayload', ParentType, ContextType>;
 };
 
-export type StudentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Student'] = ResolversParentTypes['Student']> = {
-  name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
-  phoneNumber?: Resolver<ResolversTypes['phoneNumber_String_NotNull_pattern_010098'], ParentType, ContextType>;
-  studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export interface StudentIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['StudentID'], any> {
   name: 'StudentID';
 }
 
 export type StudentInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['StudentInfo'] = ResolversParentTypes['StudentInfo']> = {
-  __resolveType: TypeResolveFn<'Form' | 'Student', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Answer', ParentType, ContextType>;
   name?: Resolver<ResolversTypes['name_String_NotNull_maxLength_5'], ParentType, ContextType>;
   phoneNumber?: Resolver<ResolversTypes['phoneNumber_String_NotNull_pattern_010098'], ParentType, ContextType>;
   studentId?: Resolver<ResolversTypes['StudentID'], ParentType, ContextType>;
@@ -1138,7 +1125,7 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 }
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['ROLE'], ParentType, ContextType>;
   token?: Resolver<ResolversTypes['JWT'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1180,10 +1167,14 @@ export interface PhoneNumber_String_NotNull_Pattern_010098ScalarConfig extends G
 }
 
 export type Resolvers<ContextType = any> = {
+  Answer?: AnswerResolvers<ContextType>;
+  AnswerConnection?: AnswerConnectionResolvers<ContextType>;
+  AnswerEdge?: AnswerEdgeResolvers<ContextType>;
+  AnswerStatus?: AnswerStatusResolvers<ContextType>;
   BigInt?: GraphQLScalarType;
   Byte?: GraphQLScalarType;
-  CreateFormInvalidInputError?: CreateFormInvalidInputErrorResolvers<ContextType>;
-  CreateFormResult?: CreateFormResultResolvers<ContextType>;
+  CreateAnswerInvalidInputError?: CreateAnswerInvalidInputErrorResolvers<ContextType>;
+  CreateAnswerResult?: CreateAnswerResultResolvers<ContextType>;
   Currency?: GraphQLScalarType;
   CursorPageInfo?: CursorPageInfoResolvers<ContextType>;
   DID?: GraphQLScalarType;
@@ -1193,10 +1184,6 @@ export type Resolvers<ContextType = any> = {
   EmailAddress?: GraphQLScalarType;
   Error?: ErrorResolvers<ContextType>;
   File?: FileResolvers<ContextType>;
-  Form?: FormResolvers<ContextType>;
-  FormConnection?: FormConnectionResolvers<ContextType>;
-  FormEdge?: FormEdgeResolvers<ContextType>;
-  FormStatus?: FormStatusResolvers<ContextType>;
   GUID?: GraphQLScalarType;
   HSL?: GraphQLScalarType;
   HSLA?: GraphQLScalarType;
@@ -1245,7 +1232,6 @@ export type Resolvers<ContextType = any> = {
   SendMessageInvalidInputError?: SendMessageInvalidInputErrorResolvers<ContextType>;
   SendMessagePayload?: SendMessagePayloadResolvers<ContextType>;
   SendMessageResult?: SendMessageResultResolvers<ContextType>;
-  Student?: StudentResolvers<ContextType>;
   StudentID?: GraphQLScalarType;
   StudentInfo?: StudentInfoResolvers<ContextType>;
   Time?: GraphQLScalarType;
