@@ -85,7 +85,7 @@ describe("Answer Service", () => {
 				}
 			`
 		describe("Success", () => {
-			it("Successful request (first time) / Should be return Answer type", async () => {
+			it("Successful request (first time) / Should be return Answer", async () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
@@ -106,7 +106,7 @@ describe("Answer Service", () => {
 				deepEqual(typeof date, "string")
 			})
 
-			it("Successful request (second time) / Should be return Answer type", async () => {
+			it("Successful request (second time) / Should be return Answer", async () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
@@ -151,7 +151,7 @@ describe("Answer Service", () => {
 				deepEqual(path, "createAnswer")
 				deepEqual(suggestion, "답변의 길이를 확인해주세요")
 			})
-			it("Failed request (invalid answerList length) / Should be return errors", async () => {
+			it("Failed request (invalid answerList length) / Should be return CreateAnswerInvalidInputError", async () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
@@ -218,7 +218,7 @@ describe("Answer Service", () => {
 				})
 			})
 
-			it("Failed request (too many requests) / Should be return errors", async () => {
+			it("Failed request (too many requests) / Should be return RateLimitError", async () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
@@ -274,7 +274,7 @@ describe("Answer Service", () => {
 		`
 
 		describe("Success", () => {
-			it("Successful request (empty cursor) / Should be return AnswerConnection type", async () => {
+			it("Successful request (empty cursor) / Should be return AnswerConnection", async () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
@@ -289,7 +289,7 @@ describe("Answer Service", () => {
 				deepEqual(edges.length, 1)
 			})
 
-			it("Successful request (first cursor) / Should be return AnswerConnection type", async () => {
+			it("Successful request (first cursor) / Should be return AnswerConnection", async () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
@@ -304,7 +304,7 @@ describe("Answer Service", () => {
 				deepEqual(edges.length, 1)
 			})
 
-			it("Successful request (last cursor) / Should be return AnswerConnection type", async () => {
+			it("Successful request (last cursor) / Should be return AnswerConnection", async () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
@@ -360,7 +360,7 @@ describe("Answer Service", () => {
 		`
 
 		describe("Success", () => {
-			it("Successful request (empty cursor) / Should be return AnswerConnection type", async () => {
+			it("Successful request (empty cursor) / Should be return AnswerConnection", async () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
@@ -375,7 +375,7 @@ describe("Answer Service", () => {
 				deepEqual(edges.length, 1)
 			})
 
-			it("Successful request (last cursor) / Should be return AnswerConnection type", async () => {
+			it("Successful request (last cursor) / Should be return AnswerConnection", async () => {
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
