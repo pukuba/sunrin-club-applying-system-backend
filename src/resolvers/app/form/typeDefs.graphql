@@ -16,7 +16,7 @@ input UpdateFormInput {
 
 extend type Mutation {
     upsertForm(
-        input: UpdateFormInput!
+        input: [UpdateFormInput!]!
     ): Form!
 }
 
