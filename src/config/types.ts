@@ -22,7 +22,12 @@ export interface Context {
 
 export type Role = Club | "TEACHER"
 
-export type RequiredContext = RequireFields<Context, keyof Context>
+export type RequiredContext = RequireFields<Context, keyof Context> & {
+	user: {
+		id: string
+		role: Club | "TEACHER"
+	}
+}
 
 export { ObjectID }
 

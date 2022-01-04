@@ -241,7 +241,7 @@ export type CreateAnswerInvalidInputError = Error & {
   suggestion: Scalars['String'];
 };
 
-export type CreateAnswerResult = Answer | CreateAnswerInvalidInputError | RateLimitError;
+export type CreateAnswerResult = Answer | CreateAnswerInvalidInputError | InvalidFormError | RateLimitError;
 
 export type CursorPageInfo = {
   __typename?: 'CursorPageInfo';
@@ -543,7 +543,7 @@ export type ResolversTypes = {
   Club: Club;
   CreateAnswerInput: CreateAnswerInput;
   CreateAnswerInvalidInputError: ResolverTypeWrapper<CreateAnswerInvalidInputError>;
-  CreateAnswerResult: ResolversTypes['Answer'] | ResolversTypes['CreateAnswerInvalidInputError'] | ResolversTypes['RateLimitError'];
+  CreateAnswerResult: ResolversTypes['Answer'] | ResolversTypes['CreateAnswerInvalidInputError'] | ResolversTypes['InvalidFormError'] | ResolversTypes['RateLimitError'];
   Currency: ResolverTypeWrapper<Scalars['Currency']>;
   CursorPageInfo: ResolverTypeWrapper<CursorPageInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -652,7 +652,7 @@ export type ResolversParentTypes = {
   Byte: Scalars['Byte'];
   CreateAnswerInput: CreateAnswerInput;
   CreateAnswerInvalidInputError: CreateAnswerInvalidInputError;
-  CreateAnswerResult: ResolversParentTypes['Answer'] | ResolversParentTypes['CreateAnswerInvalidInputError'] | ResolversParentTypes['RateLimitError'];
+  CreateAnswerResult: ResolversParentTypes['Answer'] | ResolversParentTypes['CreateAnswerInvalidInputError'] | ResolversParentTypes['InvalidFormError'] | ResolversParentTypes['RateLimitError'];
   Currency: Scalars['Currency'];
   CursorPageInfo: CursorPageInfo;
   Boolean: Scalars['Boolean'];
@@ -878,7 +878,7 @@ export type CreateAnswerInvalidInputErrorResolvers<ContextType = any, ParentType
 };
 
 export type CreateAnswerResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateAnswerResult'] = ResolversParentTypes['CreateAnswerResult']> = {
-  __resolveType: TypeResolveFn<'Answer' | 'CreateAnswerInvalidInputError' | 'RateLimitError', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Answer' | 'CreateAnswerInvalidInputError' | 'InvalidFormError' | 'RateLimitError', ParentType, ContextType>;
 };
 
 export interface CurrencyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Currency'], any> {

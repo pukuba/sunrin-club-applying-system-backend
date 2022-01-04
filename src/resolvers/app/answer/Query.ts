@@ -3,7 +3,7 @@ import { MongoQuery } from "./models"
 import { QueryGetAnswerByClubArgs, QueryGetAnswerByStudentIdArgs } from "config/models"
 
 export const getAnswerByClub = async (parent: void, args: QueryGetAnswerByClubArgs, context: Context) => {
-	const { limit = 10, cursor, club } = args
+	const { limit, cursor, club } = args
 	const { db } = context
 	const query: MongoQuery = [
 		{
@@ -38,7 +38,7 @@ export const getAnswerByStudentId = async (
 	args: QueryGetAnswerByStudentIdArgs,
 	context: RequiredContext
 ) => {
-	const { limit = 10, cursor, studentId } = args
+	const { limit, cursor, studentId } = args
 	const club = context.user.role
 	let options = {}
 	if (club !== "TEACHER") {

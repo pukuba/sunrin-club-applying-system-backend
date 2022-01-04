@@ -51,6 +51,25 @@ describe("Form Service", () => {
 		`
 		describe("Success", () => {
 			it("Successful request (created form) / Should be return Form", async () => {
+				const input = {}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.emotion}`)
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				const { latestUpdatedAt, formId, ...data } = body.data.upsertForm as Form
+				deepEqual(data, {
+					club: "EMOTION",
+					question: [],
+					introduce: "",
+					__typename: "Form",
+				})
+				deepEqual(typeof new Date(latestUpdatedAt), "object")
+				formIds.push(formId)
+			})
+
+			it("Successful request (update introduce) / Should be return Form", async () => {
 				const input = {
 					introduce: "안녕하세요 동아리 이모션입니다.",
 				}
@@ -68,7 +87,7 @@ describe("Form Service", () => {
 					__typename: "Form",
 				})
 				deepEqual(typeof new Date(latestUpdatedAt), "object")
-				formIds.push(formId)
+				deepEqual(typeof formId, "string")
 			})
 
 			it("Successful request (update qeustion) / Should be return Form", async () => {

@@ -15,7 +15,7 @@ export const upsertForm = async (parent: void, args: MutationUpsertFormArgs, con
 	return {
 		...value,
 		tracing: {
-			message: `${context.user.role?.toLowerCase()} 동아리의 폼을 수정`,
+			message: `${context.user.role.toLowerCase()} 동아리의 폼을 수정`,
 			role: context.user.role,
 			args: JSON.stringify(args.input),
 		},
