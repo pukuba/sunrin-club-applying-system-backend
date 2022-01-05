@@ -130,7 +130,7 @@ describe("Util Service", () => {
 			})
 
 			it("Failed request (too many requests) / Should be return errors", async () => {
-				await redis.setex("sendMessage:teacher", 10, "3")
+				await redis.setex("sendMessage:TEACHER", 10, "3")
 				const input = {
 					message: "실패해야하는 메세지",
 					phoneNumberList: [env.MY_PHONE],
