@@ -17,8 +17,8 @@ export const getLogByKeyword = async (
 		options["message"] = new RegExp(keyword)
 	}
 	const query: MongoQuery = [
-		{ $match: options },
 		{ $sort: { _id: -1 } },
+		{ $match: options },
 		{ $skip: (page - 1) * limit },
 		{ $limit: limit },
 	]

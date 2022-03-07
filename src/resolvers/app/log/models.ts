@@ -1,13 +1,13 @@
 import { ClubType } from "config"
 
 export type MongoQuery = [
+	{ $sort: { _id: -1 } },
 	{
 		$match: {
 			role?: ClubType
 			message?: RegExp
 		}
 	},
-	{ $sort: { _id: -1 } },
 	{ $skip: number },
 	{ $limit: number }
 ]

@@ -52,6 +52,18 @@ describe("Answer Service", () => {
 					{ message: "질문 5", length: 400 },
 				],
 			},
+			{
+				club: "UNIFOX",
+				introduce: "유니폭스입니다.",
+				latestUpdatedAt: new Date(Date.now() + 1000 * 60 * 60 * 9).toISOString(),
+				question: [
+					{ message: "질문 1", length: 400 },
+					{ message: "질문 2", length: 400 },
+					{ message: "질문 3", length: 400 },
+					{ message: "질문 4", length: 400 },
+					{ message: "질문 5", length: 400 },
+				],
+			}
 		]
 		const { insertedIds } = await db.collection("form").insertMany(form)
 		for (const key in insertedIds) formIds.push(insertedIds[key])
@@ -110,6 +122,26 @@ describe("Answer Service", () => {
 				const input = {
 					studentId: 10217,
 					name: "남승원",
+					club: "UNIFOX",
+					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3", "자소서 문항4", "자소서 문항5"],
+					phoneNumber: "01000000000",
+					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
+				}
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.send(JSON.stringify({ query, variables: { input } }))
+					.expect(200)
+				const { answerId, date, ...data } = body.data.createAnswer as Answer
+				answerIds.push(answerId)
+				deepEqual(data, { ...input, __typename: "Answer", portfolioURL: null })
+				deepEqual(typeof date, "string")
+			})
+
+			it("Successful request (third time) / Should be return Answer", async () => {
+				const input = {
+					studentId: 10217,
+					name: "두번째",
 					club: "EMOTION",
 					answerList: ["자소서 문항1", "자소서 문항2", "자소서 문항3", "자소서 문항4", "자소서 문항5"],
 					phoneNumber: "01000000000",
@@ -274,6 +306,7 @@ describe("Answer Service", () => {
 		`
 
 		describe("Success", () => {
+			let firstDocumentCursor: string, secondDocumentCursor: string
 			it("Successful request (empty cursor) / Should be return AnswerConnection", async () => {
 				const { body } = await request(app)
 					.post("/api")
@@ -287,34 +320,38 @@ describe("Answer Service", () => {
 				deepEqual(pageInfo.startCursor, null)
 				deepEqual(pageInfo.endCursor, edges[0].cursor)
 				deepEqual(edges.length, 1)
+				firstDocumentCursor = pageInfo.endCursor
 			})
 
-			it("Successful request (first cursor) / Should be return AnswerConnection", async () => {
+			it("Successful request (firstDocumentCursor) / Should be return AnswerConnection", async () => {
+				const cursor = firstDocumentCursor
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
-					.send(JSON.stringify({ query, variables: { club: "EMOTION", cursor: answerIds[0], limit: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "EMOTION", cursor, limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getAnswerByClub as AnswerConnection
 				deepEqual(totalCount, 2)
 				deepEqual(pageInfo.hasNextPage, true)
-				deepEqual(pageInfo.startCursor, answerIds[0])
+				deepEqual(pageInfo.startCursor, cursor)
 				deepEqual(pageInfo.endCursor, edges[0].cursor)
 				deepEqual(edges.length, 1)
+				secondDocumentCursor = edges[0].cursor
 			})
 
-			it("Successful request (last cursor) / Should be return AnswerConnection", async () => {
+			it("Successful request (secondDocumentCursor) / Should be return AnswerConnection", async () => {
+				const cursor = secondDocumentCursor
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.teacher}`)
-					.send(JSON.stringify({ query, variables: { club: "EMOTION", cursor: answerIds[1], limit: 1 } }))
+					.send(JSON.stringify({ query, variables: { club: "EMOTION", cursor, limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getAnswerByClub as AnswerConnection
 				deepEqual(totalCount, 2)
 				deepEqual(pageInfo.hasNextPage, false)
-				deepEqual(pageInfo.startCursor, answerIds[1])
+				deepEqual(pageInfo.startCursor, cursor)
 				deepEqual(pageInfo.endCursor, null)
 				deepEqual(edges.length, 0)
 			})
@@ -360,6 +397,7 @@ describe("Answer Service", () => {
 		`
 
 		describe("Success", () => {
+			let firstDocumentCursor: string
 			it("Successful request (empty cursor) / Should be return AnswerConnection", async () => {
 				const { body } = await request(app)
 					.post("/api")
@@ -368,26 +406,54 @@ describe("Answer Service", () => {
 					.send(JSON.stringify({ query, variables: { studentId: 10217, limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getAnswerByStudentId as AnswerConnection
-				deepEqual(totalCount, 2)
+				deepEqual(totalCount, 3)
 				deepEqual(pageInfo.hasNextPage, true)
 				deepEqual(pageInfo.startCursor, null)
 				deepEqual(pageInfo.endCursor, edges[0].cursor)
+				firstDocumentCursor = pageInfo.endCursor
 				deepEqual(edges.length, 1)
 			})
 
-			it("Successful request (last cursor) / Should be return AnswerConnection", async () => {
+			it("Successful request (firstDocumentCursor & emotion account) / Should be return AnswerConnection", async () => {
+				const cursor = firstDocumentCursor
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")
 					.set("Authorization", `Bearer ${token.emotion}`)
-					.send(JSON.stringify({ query, variables: { studentId: 10217, cursor: answerIds[1], limit: 1 } }))
+					.send(JSON.stringify({ query, variables: { studentId: 10217, cursor, limit: 1 } }))
 					.expect(200)
 				const { edges, pageInfo, totalCount } = body.data.getAnswerByStudentId as AnswerConnection
-				deepEqual(totalCount, 2)
+				deepEqual(totalCount, 3)
+				deepEqual(pageInfo.hasNextPage, true)
+				deepEqual(pageInfo.startCursor, cursor)
+				deepEqual(pageInfo.endCursor, edges[0].cursor)
+				deepEqual(edges.length, 1)
+			})
+			let endCursor: string
+			it("Successful request (firstDocumentCursor & teacher account) / Should be return AnswerConnection", async () => {
+				const cursor = firstDocumentCursor
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.teacher}`)
+					.send(JSON.stringify({ query, variables: { studentId: 10217, cursor, limit: 3 } }))
+				const { pageInfo, totalCount } = body.data.getAnswerByStudentId as AnswerConnection
+				deepEqual(totalCount, 3)
 				deepEqual(pageInfo.hasNextPage, false)
-				deepEqual(pageInfo.startCursor, answerIds[1])
+				endCursor = pageInfo.endCursor
+			})
+
+			it("Successful request (endCursor & teacher account) / Should be return null cursor", async () => {
+				const cursor = endCursor
+				const { body } = await request(app)
+					.post("/api")
+					.set("Content-Type", "application/json")
+					.set("Authorization", `Bearer ${token.teacher}`)
+					.send(JSON.stringify({ query, variables: { studentId: 10217, cursor, limit: 3 } }))
+				const { pageInfo, totalCount } = body.data.getAnswerByStudentId as AnswerConnection
+				deepEqual(pageInfo.hasNextPage, false)
 				deepEqual(pageInfo.endCursor, null)
-				deepEqual(edges.length, 0)
+				deepEqual(totalCount, 3)
 			})
 		})
 
@@ -442,7 +508,7 @@ describe("Answer Service", () => {
 					.expect(200)
 				deepEqual(body.data.getLiveAnswerStatus[0], {
 					club: "UNIFOX",
-					answerCount: 3,
+					answerCount: 4,
 				})
 				deepEqual(body.data.getLiveAnswerStatus[1], {
 					club: "EMOTION",

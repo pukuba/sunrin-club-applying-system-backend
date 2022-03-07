@@ -6,17 +6,13 @@ export const getAnswerByClub = async (parent: void, args: QueryGetAnswerByClubAr
 	const { limit, cursor, club } = args
 	const { db } = context
 	const query: MongoQuery = [
-		{
-			$match: {
-				club,
-			},
-		},
 		{ $sort: { _id: -1 } },
+		{ $match: { club, }, },
 		{ $limit: limit },
 	]
 
 	if (cursor) {
-		query[0].$match["_id"] = { $gt: new ObjectID(cursor) }
+		query[1].$match["_id"] = { $lt: new ObjectID(cursor) }
 	}
 	const [data, count] = await Promise.all([
 		db.collection("answer").aggregate(query).toArray(),
@@ -45,17 +41,12 @@ export const getAnswerByStudentId = async (
 		options = { club }
 	}
 	const query: MongoQuery = [
-		{
-			$match: {
-				studentId,
-				...options,
-			},
-		},
 		{ $sort: { _id: -1 } },
+		{ $match: { studentId, ...options, }, },
 		{ $limit: limit },
 	]
 	if (cursor) {
-		query[0].$match["_id"] = { $gt: new ObjectID(cursor) }
+		query[1].$match["_id"] = { $lt: new ObjectID(cursor) }
 	}
 	const [data, count] = await Promise.all([
 		context.db.collection("answer").aggregate(query).toArray(),
