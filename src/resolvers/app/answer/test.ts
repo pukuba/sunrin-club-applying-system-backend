@@ -260,7 +260,7 @@ describe("Answer Service", () => {
 					portfolioURL: "https://www.naver.com/",
 					otherURLs: ["https://www.google.com/", "https://www.daum.net/"],
 				}
-				await redis.setex("createAnswer:::ffff:127.0.0.1", 60, "10")
+				await redis.setex("createAnswer:::ffff:127.0.0.1", 60, "30")
 				const { body } = await request(app)
 					.post("/api")
 					.set("Content-Type", "application/json")

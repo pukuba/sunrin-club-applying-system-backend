@@ -7,8 +7,8 @@ const isValidStudentID = (value: any) => {
 	}
 	// 10101 1학년 1반 1번
 	// 10329 1학년 3반 29번
-	if (!(/^10[1-3][0-2][0-9]$/.test(value.toString()) && value % 100 !== 0)) {
-		throw new UserInputError("잘못된 학번입니다 반은 01 ~ 03 번호는 01 ~ 29 까지 유효합니다")
+	if (!(/^1[0-1][0-9][0-2][0-9]$/.test(value.toString()) && value % 100 !== 0)) {
+		throw new UserInputError("잘못된 학번입니다 반은 01 ~ 12 번호는 01 ~ 29 까지 유효합니다")
 	}
 	return value
 }

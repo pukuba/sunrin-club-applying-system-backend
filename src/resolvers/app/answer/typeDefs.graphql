@@ -48,7 +48,7 @@ extend type Mutation {
     # 동아리 신청서 전송
     createAnswer(
         input: CreateAnswerInput!
-    ): CreateAnswerResult! @ratelimit(ttl: 60, max: 10, key: "createAnswer", keyType: IP)
+    ): CreateAnswerResult! @ratelimit(ttl: 60, max: 30, key: "createAnswer", keyType: IP)
 }
 
 extend type Query {
