@@ -5,7 +5,7 @@ extend type Mutation {
 }
 
 input SendMessageInput {
-    message: String! @constraint(maxLength: 80)
+    message: String! @constraint(maxLength: 200)
     phoneNumberList: [String!]! @constraint(pattern: "^010([0-9]{8})$")
 }
 
